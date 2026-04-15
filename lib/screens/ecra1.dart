@@ -19,6 +19,9 @@ class _Ecra1State extends State<Ecra1> {
   final artigoNomeController = TextEditingController();
   final precoController = TextEditingController();
 
+  // Quantidade atual
+  int quantidadeAtual = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +61,6 @@ class _Ecra1State extends State<Ecra1> {
               child: const Text("Adicionar Participante"),
             ),
 
-            // Lista de participantes
             ...participantes.map(
               (p) => ListTile(
                 title: Text(p.nome),
@@ -90,6 +92,32 @@ class _Ecra1State extends State<Ecra1> {
 
             const SizedBox(height: 10),
 
+            // ===== QUANTIDADE (➕➖) =====
+            Row(
+              children: [
+                const Text("Quantidade: "),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (quantidadeAtual > 1) quantidadeAtual--;
+                    });
+                  },
+                  icon: const Icon(Icons.remove),
+                ),
+                Text("$quantidadeAtual"),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      quantidadeAtual++;
+                    });
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
             ElevatedButton(
               onPressed: () {
                 if (artigoNomeController.text.isNotEmpty &&
@@ -99,28 +127,30 @@ class _Ecra1State extends State<Ecra1> {
                       Artigo(
                         nome: artigoNomeController.text,
                         preco: double.parse(precoController.text),
+                        quantidade: quantidadeAtual,
                       ),
                     );
 
                     artigoNomeController.clear();
                     precoController.clear();
+                    quantidadeAtual = 1;
                   });
                 }
               },
               child: const Text("Adicionar Artigo"),
             ),
 
-            // Lista de artigos
             ...artigos.map(
               (a) => ListTile(
                 title: Text(a.nome),
-                subtitle: Text("${a.preco.toStringAsFixed(2)} €"),
+                subtitle: Text(
+                  "${a.preco.toStringAsFixed(2)} € | Quantidade: ${a.quantidade}",
+                ),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // ===== BOTÃO PRÓXIMO =====
             ElevatedButton(
               onPressed: () {
                 if (participantes.length < 2 || artigos.isEmpty) {
@@ -134,7 +164,7 @@ class _Ecra1State extends State<Ecra1> {
                   return;
                 }
 
-                // Navegação para o Ecrã 2 (vais fazer depois)
+                // Navegação futura
               },
               child: const Text("Próximo"),
             ),
