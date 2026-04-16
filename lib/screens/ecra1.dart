@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/providers.dart';
+import 'ecra2.dart';
 
 class Ecra1 extends ConsumerWidget {
   Ecra1({super.key});
@@ -118,6 +119,31 @@ class Ecra1 extends ConsumerWidget {
                   "${a.preco} € | Qtd: ${a.quantidade}",
                 ),
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(                     
+              onPressed: () {
+                if (state.participantes.length < 2 || state.artigos.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Precisas de pelo menos 2 participantes e 1 artigo",
+                      ),
+                    ),
+                  );
+                  return;
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Ecra2(),
+                  ),
+                );
+              },
+              child: const Text("Próximo"),
             ),
           ],
         ),
