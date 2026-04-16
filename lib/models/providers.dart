@@ -9,6 +9,7 @@ class ContaNotifier extends Notifier<ContaState> {
       participantes: [],
       artigos: [],
       quantidadeAtual: 1,
+      atribuicoes: {}, // 👈 ADICIONADO
     );
   }
 
@@ -22,6 +23,8 @@ class ContaNotifier extends Notifier<ContaState> {
   }
 
   void adicionarArtigo(String nome, double preco) {
+    final novoIndex = state.artigos.length; // 👈 ADICIONADO
+
     state = state.copyWith(
       artigos: [
         ...state.artigos,
@@ -32,6 +35,10 @@ class ContaNotifier extends Notifier<ContaState> {
         ),
       ],
       quantidadeAtual: 1,
+      atribuicoes: {
+        ...state.atribuicoes,
+        novoIndex: [], // 👈 ADICIONADO
+      },
     );
   }
 
@@ -48,6 +55,41 @@ class ContaNotifier extends Notifier<ContaState> {
       );
     }
   }
+
+  // =========================
+  // 👇 ADICIONADO PARA ECRÃ 2
+  // =========================
+
+  void toggleParticipante(int artigoIndex, int participanteIndex) {
+    final atuais = state.atribuicoes[artigoIndex] ?? [];
+
+    final novaLista = [...atuais];
+
+    if (novaLista.contains(participanteIndex)) {
+      novaLista.remove(participanteIndex);
+    } else {
+      novaLista.add(participanteIndex);
+    }
+
+    state = state.copyWith(
+      atribuicoes: {
+        ...state.atribuicoes,
+        artigoIndex: novaLista,
+      },
+    );
+  }
+
+  void dividirPorTodos(int artigoIndex) {
+    final todos =
+        List.generate(state.participantes.length, (i) => i);
+
+    state = state.copyWith(
+      atribuicoes: {
+        ...state.atribuicoes,
+        artigoIndex: todos,
+      },
+    );
+  }
 }
 
 // estado
@@ -56,21 +98,27 @@ class ContaState {
   final List<Artigo> artigos;
   final int quantidadeAtual;
 
+  // 👇 ADICIONADO
+  final Map<int, List<int>> atribuicoes;
+
   ContaState({
     required this.participantes,
     required this.artigos,
     required this.quantidadeAtual,
+    required this.atribuicoes, // 👈 ADICIONADO
   });
 
   ContaState copyWith({
     List<Participante>? participantes,
     List<Artigo>? artigos,
     int? quantidadeAtual,
+    Map<int, List<int>>? atribuicoes, // 👈 ADICIONADO
   }) {
     return ContaState(
       participantes: participantes ?? this.participantes,
       artigos: artigos ?? this.artigos,
       quantidadeAtual: quantidadeAtual ?? this.quantidadeAtual,
+      atribuicoes: atribuicoes ?? this.atribuicoes, // 👈 ADICIONADO
     );
   }
 }
