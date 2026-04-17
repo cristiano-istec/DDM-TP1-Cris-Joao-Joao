@@ -39,16 +39,6 @@ class Ecra1 extends ConsumerWidget {
                   notifier.adicionarParticipante(nomeController.text);
                   nomeController.clear();
                 }
-
-                if (state.participantes.length < 2 || state.artigos.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Precisas de pelo menos 2 participantes e 1 artigo",
-                      ),
-                    ),
-                  );
-                } 
               },
               
               child: const Text("Adicionar Participante"),
@@ -98,16 +88,6 @@ class Ecra1 extends ConsumerWidget {
                   artigoNomeController.clear();
                   precoController.clear();
                 }
-
-                if (state.participantes.length < 2 || state.artigos.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Precisas de pelo menos 2 participantes e 1 artigo",
-                      ),
-                    ),
-                  );
-                } 
               },
               child: const Text("Adicionar Artigo"),
             ),
