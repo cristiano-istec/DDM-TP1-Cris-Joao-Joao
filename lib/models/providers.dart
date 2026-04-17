@@ -9,7 +9,7 @@ class ContaNotifier extends Notifier<ContaState> {
       participantes: [],
       artigos: [],
       quantidadeAtual: 1,
-      atribuicoes: {}, // 👈 ADICIONADO
+      atribuicoes: {},
     );
   }
 
@@ -23,7 +23,7 @@ class ContaNotifier extends Notifier<ContaState> {
   }
 
   void adicionarArtigo(String nome, double preco) {
-    final novoIndex = state.artigos.length; // 👈 ADICIONADO
+    final novoIndex = state.artigos.length;
 
     state = state.copyWith(
       artigos: [
@@ -37,7 +37,7 @@ class ContaNotifier extends Notifier<ContaState> {
       quantidadeAtual: 1,
       atribuicoes: {
         ...state.atribuicoes,
-        novoIndex: [], // 👈 ADICIONADO
+        novoIndex: [],
       },
     );
   }
@@ -55,10 +55,6 @@ class ContaNotifier extends Notifier<ContaState> {
       );
     }
   }
-
-  // =========================
-  // 👇 ADICIONADO PARA ECRÃ 2
-  // =========================
 
   void toggleParticipante(int artigoIndex, int participanteIndex) {
     final atuais = state.atribuicoes[artigoIndex] ?? [];
@@ -98,27 +94,26 @@ class ContaState {
   final List<Artigo> artigos;
   final int quantidadeAtual;
 
-  // 👇 ADICIONADO
   final Map<int, List<int>> atribuicoes;
 
   ContaState({
     required this.participantes,
     required this.artigos,
     required this.quantidadeAtual,
-    required this.atribuicoes, // 👈 ADICIONADO
+    required this.atribuicoes, 
   });
 
   ContaState copyWith({
     List<Participante>? participantes,
     List<Artigo>? artigos,
     int? quantidadeAtual,
-    Map<int, List<int>>? atribuicoes, // 👈 ADICIONADO
+    Map<int, List<int>>? atribuicoes,
   }) {
     return ContaState(
       participantes: participantes ?? this.participantes,
       artigos: artigos ?? this.artigos,
       quantidadeAtual: quantidadeAtual ?? this.quantidadeAtual,
-      atribuicoes: atribuicoes ?? this.atribuicoes, // 👈 ADICIONADO
+      atribuicoes: atribuicoes ?? this.atribuicoes,
     );
   }
 }

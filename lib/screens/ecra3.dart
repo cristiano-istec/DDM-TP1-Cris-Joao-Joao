@@ -13,7 +13,7 @@ class Ecra3 extends ConsumerWidget {
     final artigos = conta.artigos;
     final atribuicoes = conta.atribuicoes;
 
-    // 🔹 MAPA DE TOTAIS
+    // Mapa de Totais
     Map<int, double> totais = {};
 
     // inicializar
@@ -21,7 +21,7 @@ class Ecra3 extends ConsumerWidget {
       totais[i] = 0;
     }
 
-    // 🔹 CALCULAR
+    // Calcular
     for (int i = 0; i < artigos.length; i++) {
       final artigo = artigos[i];
 
@@ -52,7 +52,7 @@ class Ecra3 extends ConsumerWidget {
 
           const SizedBox(height: 10),
 
-          // 🔹 MOSTRAR RESULTADO
+          // Mostrar Resultado
           ...participantes.asMap().entries.map((entry) {
             final index = entry.key;
             final participante = entry.value;

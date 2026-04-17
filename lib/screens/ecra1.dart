@@ -25,7 +25,7 @@ class Ecra1 extends ConsumerWidget {
         child: ListView(
           children: [
 
-            // ===== PARTICIPANTES =====
+            // Participantes
             const Text(
               "Participantes",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -50,7 +50,7 @@ class Ecra1 extends ConsumerWidget {
 
             const Divider(),
 
-            // ===== ARTIGOS =====
+            // Artigos
             const Text("Artigos"),
 
             TextField(controller: artigoNomeController),
@@ -60,7 +60,7 @@ class Ecra1 extends ConsumerWidget {
               keyboardType: TextInputType.number,
             ),
 
-            // QUANTIDADE
+            // Quantidade
             Row(
               children: [
                 IconButton(

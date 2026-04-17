@@ -20,7 +20,7 @@ class Ecra2 extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          // 🔹 LISTA DE ARTIGOS
+          // Lista de Artigos
           ...artigos.asMap().entries.map((entry) {
             final index = entry.key;
             final artigo = entry.value;
@@ -35,7 +35,7 @@ class Ecra2 extends ConsumerWidget {
                   "${artigo.preco.toStringAsFixed(2)}€ x${artigo.quantidade}",
                 ),
                 children: [
-                  // 🔹 BOTÃO dividir por todos
+                  // Botão dividir por todos
                   TextButton(
                     onPressed: () {
                       ref
@@ -45,7 +45,7 @@ class Ecra2 extends ConsumerWidget {
                     child: const Text("Dividir por todos"),
                   ),
 
-                  // 🔹 CHECKBOXES
+                  // Checkboxes
                   ...participantes.asMap().entries.map((pEntry) {
                     final pIndex = pEntry.key;
                     final participante = pEntry.value;
@@ -69,12 +69,12 @@ class Ecra2 extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          // 🔥 BOTÃO FINAL
+          // Botão Final
           Padding(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () {
-                // 🔹 VALIDAÇÃO
+                // Validação
                 bool valido = true;
 
                 for (int i = 0; i < artigos.length; i++) {
@@ -95,7 +95,7 @@ class Ecra2 extends ConsumerWidget {
                   return;
                 }
 
-                // 🔹 NAVEGAÇÃO
+                // Navegação
                 Navigator.push(
                   context,
                   MaterialPageRoute(
