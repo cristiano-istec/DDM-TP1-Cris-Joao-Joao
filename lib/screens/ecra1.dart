@@ -16,14 +16,12 @@ class Ecra1 extends ConsumerStatefulWidget {
 }
 
 class _Ecra1State extends ConsumerState<Ecra1> {
-  // Controllers para recolher input do utilizador
   final nomeController = TextEditingController();
   final artigoController = TextEditingController();
   final precoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // Obter estado global da aplicação (Riverpod)
     final conta = ref.watch(contaProvider);
 
     return Scaffold(
@@ -35,7 +33,6 @@ class _Ecra1State extends ConsumerState<Ecra1> {
         foregroundColor: Colors.black,
       ),
 
-      // Scroll principal da página
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -46,21 +43,23 @@ class _Ecra1State extends ConsumerState<Ecra1> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                // Título
                 const Text("Participantes",
                     style: TextStyle(color: Colors.white)),
+
+                const SizedBox(height: 12),
 
                 NeonInput(
                   controller: nomeController,
                   label: "Nome",
                 ),
 
+                const SizedBox(height: 12),
+
                 NeonButton(
-                  text: "Adicionar",
+                  text: "Adicionar participante",
                   onPressed: () {
                     if (nomeController.text.isEmpty) return;
 
-                    // Adiciona participante ao estado global
                     ref.read(contaProvider.notifier)
                         .adicionarParticipante(nomeController.text);
 
@@ -68,25 +67,30 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   },
                 ),
 
-                // Lista de participantes atuais
+                const SizedBox(height: 12),
+
                 ...conta.participantes.asMap().entries.map((e) {
                   final i = e.key;
                   final p = e.value;
 
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.person,
-                        color: Colors.white),
-                    title: Text(p.nome,
-                        style: const TextStyle(color: Colors.white)),
-
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete,
-                          color: Colors.red),
-                      onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .removerParticipante(i);
-                      },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.person,
+                          color: Colors.white),
+                      title: Text(
+                        p.nome,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete,
+                            color: Colors.red),
+                        onPressed: () {
+                          ref.read(contaProvider.notifier)
+                              .removerParticipante(i);
+                        },
+                      ),
                     ),
                   );
                 }),
@@ -94,7 +98,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           // Artigos
           NeonCard(
@@ -105,19 +109,24 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 const Text("Artigos",
                     style: TextStyle(color: Colors.white)),
 
+                const SizedBox(height: 12),
+
                 NeonInput(
                   controller: artigoController,
                   label: "Artigo",
                 ),
 
-                // Input preço artigo
+                const SizedBox(height: 12),
+
                 NeonInput(
                   controller: precoController,
                   label: "Preço",
                   keyboardType: TextInputType.number,
                 ),
 
-                // Contador de quantidade
+                const SizedBox(height: 16),
+
+                // QUANTIDADE
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -131,13 +140,15 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       },
                     ),
 
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 16),
 
-                    // valor atual
-                    Text("${conta.quantidadeAtual}",
-                        style: const TextStyle(color: Colors.white)),
+                    Text(
+                      "${conta.quantidadeAtual}",
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 18),
+                    ),
 
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 16),
 
                     NeonCircleButton(
                       icon: Icons.add,
@@ -150,13 +161,14 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   ],
                 ),
 
+                const SizedBox(height: 16),
+
                 NeonButton(
                   text: "Adicionar artigo",
                   onPressed: () {
                     if (artigoController.text.isEmpty ||
                         precoController.text.isEmpty) return;
 
-                    // adiciona artigo ao estado global
                     ref.read(contaProvider.notifier).adicionarArtigo(
                           artigoController.text,
                           double.parse(precoController.text),
@@ -167,25 +179,28 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   },
                 ),
 
-                // lista de artigos atuais
+                const SizedBox(height: 12),
+
                 ...conta.artigos.asMap().entries.map((e) {
                   final i = e.key;
                   final a = e.value;
 
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      "${a.nome} - ${a.preco}€ x${a.quantidade}",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete,
-                          color: Colors.red),
-                      onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .removerArtigo(i);
-                      },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        "${a.nome} - ${a.preco}€ x${a.quantidade}",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete,
+                            color: Colors.red),
+                        onPressed: () {
+                          ref.read(contaProvider.notifier)
+                              .removerArtigo(i);
+                        },
+                      ),
                     ),
                   );
                 }),
@@ -195,6 +210,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
+          // Avançar
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {
