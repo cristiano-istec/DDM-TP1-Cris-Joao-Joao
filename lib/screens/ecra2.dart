@@ -31,6 +31,12 @@ class Ecra2 extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF1A1A1A),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00FFC6).withOpacity(0.3),
+                    blurRadius: 20,
+                  )
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,16 +49,14 @@ class Ecra2 extends ConsumerWidget {
                       style: const TextStyle(color: Colors.grey)),
 
                   TextButton(
-                    onPressed: () => ref
-                        .read(contaProvider.notifier)
-                        .dividirPorTodos(i),
+                    onPressed: () =>
+                        ref.read(contaProvider.notifier).dividirPorTodos(i),
                     child: const Text("Dividir por todos",
                         style: TextStyle(color: Color(0xFF00FFC6))),
                   ),
 
                   ...conta.participantes.asMap().entries.map((p) {
-                    final selecionados =
-                        conta.atribuicoes[i] ?? [];
+                    final selecionados = conta.atribuicoes[i] ?? [];
 
                     return CheckboxListTile(
                       activeColor: const Color(0xFF00FFC6),
@@ -60,8 +64,7 @@ class Ecra2 extends ConsumerWidget {
                           style: const TextStyle(color: Colors.white)),
                       value: selecionados.contains(p.key),
                       onChanged: (_) {
-                        ref
-                            .read(contaProvider.notifier)
+                        ref.read(contaProvider.notifier)
                             .toggleParticipante(i, p.key);
                       },
                     );
@@ -73,7 +76,9 @@ class Ecra2 extends ConsumerWidget {
 
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00FFC6),
+              backgroundColor: const Color(0xFF8B00FF),
+              shadowColor: const Color(0xFF8B00FF),
+              elevation: 10,
             ),
             onPressed: () {
               Navigator.push(

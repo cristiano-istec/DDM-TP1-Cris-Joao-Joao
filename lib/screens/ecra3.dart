@@ -45,6 +45,12 @@ class Ecra3 extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF1A1A1A),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00FFC6).withOpacity(0.3),
+                    blurRadius: 20,
+                  )
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,8 +61,9 @@ class Ecra3 extends ConsumerWidget {
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
                     style: const TextStyle(
-                        color: Color(0xFF00FFC6),
-                        fontWeight: FontWeight.bold),
+                      color: Color(0xFF00FFC6),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

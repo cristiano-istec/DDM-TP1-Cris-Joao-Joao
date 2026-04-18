@@ -15,11 +15,26 @@ class _Ecra1State extends ConsumerState<Ecra1> {
   final artigoNomeController = TextEditingController();
   final precoController = TextEditingController();
 
+  BoxShadow neonGlow(Color color) {
+    return BoxShadow(
+      color: color.withOpacity(0.6),
+      blurRadius: 20,
+      spreadRadius: 2,
+    );
+  }
+
   Widget _circleBtn(IconData icon, VoidCallback onPressed, Color color) {
-    return Ink(
+    return Container(
       decoration: ShapeDecoration(
         color: color,
         shape: const CircleBorder(),
+        shadows: [
+          BoxShadow(
+            color: color.withOpacity(0.8),
+            blurRadius: 15,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: IconButton(
         icon: Icon(icon, color: Colors.black),
@@ -96,22 +111,20 @@ class _Ecra1State extends ConsumerState<Ecra1> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _circleBtn(
-                  Icons.remove,
-                  () => ref.read(contaProvider.notifier)
-                      .decrementarQuantidade(),
-                  const Color(0xFF8B00FF),
-                ),
+                _circleBtn(Icons.remove, () {
+                  ref.read(contaProvider.notifier).decrementarQuantidade();
+                }, const Color(0xFF8B00FF)),
+
                 const SizedBox(width: 16),
+
                 Text("${conta.quantidadeAtual}",
                     style: const TextStyle(color: Colors.white, fontSize: 18)),
+
                 const SizedBox(width: 16),
-                _circleBtn(
-                  Icons.add,
-                  () => ref.read(contaProvider.notifier)
-                      .incrementarQuantidade(),
-                  const Color(0xFF00FFC6),
-                ),
+
+                _circleBtn(Icons.add, () {
+                  ref.read(contaProvider.notifier).incrementarQuantidade();
+                }, const Color(0xFF00FFC6)),
               ],
             ),
 
@@ -148,10 +161,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           const SizedBox(height: 20),
 
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00FFC6),
-              foregroundColor: Colors.black,
-            ),
+            style: _btnStyle(),
             onPressed: () {
               if (conta.participantes.length < 2 ||
                   conta.artigos.isEmpty) return;
@@ -168,19 +178,20 @@ class _Ecra1State extends ConsumerState<Ecra1> {
     );
   }
 
-  // UI HELPERS
-
   Widget _card(List<Widget> children) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF00FFC6).withOpacity(0.4),
+            blurRadius: 20,
+          )
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -202,5 +213,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
   ButtonStyle _btnStyle() => ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
+        shadowColor: const Color(0xFF00FFC6),
+        elevation: 10,
       );
 }
