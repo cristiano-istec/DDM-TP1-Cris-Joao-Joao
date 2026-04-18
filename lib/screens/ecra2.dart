@@ -15,15 +15,18 @@ class Ecra2 extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
+
       appBar: AppBar(
         title: const Text("Dividir Conta"),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
 
+          // lista de artigos para atribuição
           ...conta.artigos.asMap().entries.map((entry) {
             final i = entry.key;
             final artigo = entry.value;
@@ -50,14 +53,19 @@ class Ecra2 extends ConsumerWidget {
                     ),
                   ),
 
+                  // seleção de participantes
                   ...conta.participantes.asMap().entries.map((p) {
                     final selecionados = conta.atribuicoes[i] ?? [];
 
                     return CheckboxListTile(
                       activeColor: const Color(0xFF00FFC6),
+
                       title: Text(p.value.nome,
                           style: const TextStyle(color: Colors.white)),
+
+                      // verifica se está atribuído
                       value: selecionados.contains(p.key),
+
                       onChanged: (_) {
                         ref.read(contaProvider.notifier)
                             .toggleParticipante(i, p.key);
@@ -77,7 +85,7 @@ class Ecra2 extends ConsumerWidget {
                 MaterialPageRoute(builder: (_) => const Ecra3()),
               );
             },
-          )
+          ),
         ],
       ),
     );

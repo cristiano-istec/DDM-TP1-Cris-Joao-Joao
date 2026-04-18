@@ -11,12 +11,15 @@ class Ecra3 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final conta = ref.watch(contaProvider);
 
+    // mapa com totais por participante
     Map<int, double> totais = {};
 
+    // inicializar valores
     for (int i = 0; i < conta.participantes.length; i++) {
       totais[i] = 0;
     }
 
+    // calcular divisão de custos
     for (int i = 0; i < conta.artigos.length; i++) {
       final artigo = conta.artigos[i];
       final selecionados = conta.atribuicoes[i] ?? [];
@@ -31,24 +34,30 @@ class Ecra3 extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
+
       appBar: AppBar(
         title: const Text("Conta Final"),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
 
+          // resultado final por participante
           ...conta.participantes.asMap().entries.map((p) {
             return NeonCard(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                 children: [
 
+                  // nome participante
                   Text(p.value.nome,
                       style: const TextStyle(color: Colors.white)),
 
+                  // valor a pagar
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
                     style: const TextStyle(

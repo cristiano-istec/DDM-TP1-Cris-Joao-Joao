@@ -16,22 +16,26 @@ class Ecra1 extends ConsumerStatefulWidget {
 }
 
 class _Ecra1State extends ConsumerState<Ecra1> {
+  // Controllers para recolher input do utilizador
   final nomeController = TextEditingController();
   final artigoController = TextEditingController();
   final precoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // Obter estado global da aplicação (Riverpod)
     final conta = ref.watch(contaProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
+
       appBar: AppBar(
         title: const Text("Divisão de Conta"),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
 
+      // Scroll principal da página
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -39,28 +43,24 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           // Participantes
           NeonCard(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                const Text(
-                  "Participantes",
-                  style: TextStyle(color: Colors.white),
-                ),
-
-                const SizedBox(height: 10),
+                // Título
+                const Text("Participantes",
+                    style: TextStyle(color: Colors.white)),
 
                 NeonInput(
                   controller: nomeController,
                   label: "Nome",
                 ),
 
-                const SizedBox(height: 10),
-
                 NeonButton(
                   text: "Adicionar",
                   onPressed: () {
                     if (nomeController.text.isEmpty) return;
 
+                    // Adiciona participante ao estado global
                     ref.read(contaProvider.notifier)
                         .adicionarParticipante(nomeController.text);
 
@@ -68,17 +68,28 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   },
                 ),
 
-                const SizedBox(height: 10),
+                // Lista de participantes atuais
+                ...conta.participantes.asMap().entries.map((e) {
+                  final i = e.key;
+                  final p = e.value;
 
-                ...conta.participantes.map((p) => ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.person,
-                          color: Colors.white),
-                      title: Text(
-                        p.nome,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    )),
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.person,
+                        color: Colors.white),
+                    title: Text(p.nome,
+                        style: const TextStyle(color: Colors.white)),
+
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete,
+                          color: Colors.red),
+                      onPressed: () {
+                        ref.read(contaProvider.notifier)
+                            .removerParticipante(i);
+                      },
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -88,31 +99,25 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           // Artigos
           NeonCard(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                const Text(
-                  "Artigos",
-                  style: TextStyle(color: Colors.white),
-                ),
-
-                const SizedBox(height: 10),
+                const Text("Artigos",
+                    style: TextStyle(color: Colors.white)),
 
                 NeonInput(
                   controller: artigoController,
                   label: "Artigo",
                 ),
 
-                const SizedBox(height: 10),
-
+                // Input preço artigo
                 NeonInput(
                   controller: precoController,
                   label: "Preço",
                   keyboardType: TextInputType.number,
                 ),
 
-                const SizedBox(height: 10),
-
+                // Contador de quantidade
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -120,31 +125,30 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                     NeonCircleButton(
                       icon: Icons.remove,
                       color: const Color(0xFF8B00FF),
-                      onPressed: () => ref
-                          .read(contaProvider.notifier)
-                          .decrementarQuantidade(),
+                      onPressed: () {
+                        ref.read(contaProvider.notifier)
+                            .decrementarQuantidade();
+                      },
                     ),
 
                     const SizedBox(width: 10),
 
-                    Text(
-                      "${conta.quantidadeAtual}",
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    // valor atual
+                    Text("${conta.quantidadeAtual}",
+                        style: const TextStyle(color: Colors.white)),
 
                     const SizedBox(width: 10),
 
                     NeonCircleButton(
                       icon: Icons.add,
                       color: const Color(0xFF00FFC6),
-                      onPressed: () => ref
-                          .read(contaProvider.notifier)
-                          .incrementarQuantidade(),
+                      onPressed: () {
+                        ref.read(contaProvider.notifier)
+                            .incrementarQuantidade();
+                      },
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 10),
 
                 NeonButton(
                   text: "Adicionar artigo",
@@ -152,6 +156,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                     if (artigoController.text.isEmpty ||
                         precoController.text.isEmpty) return;
 
+                    // adiciona artigo ao estado global
                     ref.read(contaProvider.notifier).adicionarArtigo(
                           artigoController.text,
                           double.parse(precoController.text),
@@ -162,24 +167,34 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   },
                 ),
 
-                const SizedBox(height: 10),
+                // lista de artigos atuais
+                ...conta.artigos.asMap().entries.map((e) {
+                  final i = e.key;
+                  final a = e.value;
 
-                const Text(
-                  "Lista de artigos",
-                  style: TextStyle(color: Colors.grey),
-                ),
-
-                ...conta.artigos.map((a) => Text(
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
                       "${a.nome} - ${a.preco}€ x${a.quantidade}",
                       style: const TextStyle(color: Colors.white),
-                    )),
+                    ),
+
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete,
+                          color: Colors.red),
+                      onPressed: () {
+                        ref.read(contaProvider.notifier)
+                            .removerArtigo(i);
+                      },
+                    ),
+                  );
+                }),
               ],
             ),
           ),
 
           const SizedBox(height: 20),
 
-          // Avançar
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {

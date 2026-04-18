@@ -22,6 +22,13 @@ class ContaNotifier extends Notifier<ContaState> {
     );
   }
 
+  void removerParticipante(int index) {
+    final novos = [...state.participantes];
+    novos.removeAt(index);
+
+    state = state.copyWith(participantes: novos);
+  }
+
   void adicionarArtigo(String nome, double preco) {
     final novoIndex = state.artigos.length;
 
@@ -42,6 +49,19 @@ class ContaNotifier extends Notifier<ContaState> {
     );
   }
 
+  void removerArtigo(int index) {
+    final novosArtigos = [...state.artigos];
+    novosArtigos.removeAt(index);
+
+    final novasAtribuicoes = {...state.atribuicoes};
+    novasAtribuicoes.remove(index);
+
+    state = state.copyWith(
+      artigos: novosArtigos,
+      atribuicoes: novasAtribuicoes,
+    );
+  }
+
   void incrementarQuantidade() {
     state = state.copyWith(
       quantidadeAtual: state.quantidadeAtual + 1,
@@ -58,19 +78,18 @@ class ContaNotifier extends Notifier<ContaState> {
 
   void toggleParticipante(int artigoIndex, int participanteIndex) {
     final atuais = state.atribuicoes[artigoIndex] ?? [];
+    final nova = [...atuais];
 
-    final novaLista = [...atuais];
-
-    if (novaLista.contains(participanteIndex)) {
-      novaLista.remove(participanteIndex);
+    if (nova.contains(participanteIndex)) {
+      nova.remove(participanteIndex);
     } else {
-      novaLista.add(participanteIndex);
+      nova.add(participanteIndex);
     }
 
     state = state.copyWith(
       atribuicoes: {
         ...state.atribuicoes,
-        artigoIndex: novaLista,
+        artigoIndex: nova,
       },
     );
   }
@@ -88,19 +107,17 @@ class ContaNotifier extends Notifier<ContaState> {
   }
 }
 
-// estado
 class ContaState {
   final List<Participante> participantes;
   final List<Artigo> artigos;
   final int quantidadeAtual;
-
   final Map<int, List<int>> atribuicoes;
 
   ContaState({
     required this.participantes,
     required this.artigos,
     required this.quantidadeAtual,
-    required this.atribuicoes, 
+    required this.atribuicoes,
   });
 
   ContaState copyWith({
