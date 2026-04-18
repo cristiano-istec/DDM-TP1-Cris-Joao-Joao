@@ -36,7 +36,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
         padding: const EdgeInsets.all(16),
         children: [
 
-          // ================= PARTICIPANTES =================
+          // Participantes
           NeonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
@@ -85,7 +85,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 16),
 
-          // ================= ARTIGOS =================
+          // Artigos
           NeonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
@@ -179,7 +179,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // ================= AVANÇAR =================
+          // Avançar
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {
