@@ -11,41 +11,59 @@ class Ecra2 extends ConsumerWidget {
     final conta = ref.watch(contaProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF0FAF7),
       appBar: AppBar(
         title: const Text("Dividir Conta"),
+        backgroundColor: const Color(0xFF00C49A),
       ),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          ...conta.artigos.asMap().entries.map((entry) {
-            final index = entry.key;
-            final artigo = entry.value;
-            final selecionados = conta.atribuicoes[index] ?? [];
 
-            return Card(
-              margin: const EdgeInsets.all(10),
-              child: ExpansionTile(
-                title: Text(artigo.nome),
-                subtitle: Text(
-                    "${artigo.preco.toStringAsFixed(2)}€ x${artigo.quantidade}"),
+          ...conta.artigos.asMap().entries.map((entry) {
+            final i = entry.key;
+            final artigo = entry.value;
+            final selecionados = conta.atribuicoes[i] ?? [];
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                  )
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    artigo.nome,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+
+                  Text("${artigo.preco}€ x${artigo.quantidade}"),
+
                   TextButton(
                     onPressed: () {
                       ref.read(contaProvider.notifier)
-                          .dividirPorTodos(index);
+                          .dividirPorTodos(i);
                     },
                     child: const Text("Dividir por todos"),
                   ),
 
-                  ...conta.participantes.asMap().entries.map((pEntry) {
-                    final pIndex = pEntry.key;
-                    final participante = pEntry.value;
-
+                  ...conta.participantes.asMap().entries.map((p) {
                     return CheckboxListTile(
-                      title: Text(participante.nome),
-                      value: selecionados.contains(pIndex),
+                      title: Text(p.value.nome),
+                      value: selecionados.contains(p.key),
                       onChanged: (_) {
                         ref.read(contaProvider.notifier)
-                            .toggleParticipante(index, pIndex);
+                            .toggleParticipante(i, p.key);
                       },
                     );
                   }),
@@ -56,37 +74,19 @@ class Ecra2 extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton(
-              onPressed: () {
-                bool valido = true;
-
-                for (int i = 0; i < conta.artigos.length; i++) {
-                  if ((conta.atribuicoes[i] ?? []).isEmpty) {
-                    valido = false;
-                    break;
-                  }
-                }
-
-                if (!valido) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          "Todos os artigos devem ter pelo menos 1 participante"),
-                    ),
-                  );
-                  return;
-                }
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const Ecra3()),
-                );
-              },
-              child: const Text("Calcular Conta"),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0077B6),
+              padding: const EdgeInsets.all(14),
             ),
-          ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const Ecra3()),
+              );
+            },
+            child: const Text("Calcular Conta"),
+          )
         ],
       ),
     );

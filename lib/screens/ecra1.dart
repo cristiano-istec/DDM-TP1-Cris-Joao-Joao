@@ -15,31 +15,51 @@ class _Ecra1State extends ConsumerState<Ecra1> {
   final artigoNomeController = TextEditingController();
   final precoController = TextEditingController();
 
+  // --- Botão redondo reutilizável ---
+  Widget _circleBtn(IconData icon, VoidCallback onPressed, Color color) {
+    return Ink(
+      decoration: ShapeDecoration(
+        color: color,
+        shape: const CircleBorder(),
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final conta = ref.watch(contaProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF1FFF8), // fundo suave
       appBar: AppBar(
         title: const Text("Divisão de Conta"),
+        backgroundColor: const Color(0xFF00C49A), // verde mint
+        foregroundColor: Colors.white,
       ),
       body: ListView(
         children: [
-          // Participantes
+          // ---------------- PARTICIPANTES ----------------
           Card(
-            elevation: 3,
-            margin: const EdgeInsets.all(10),
+            elevation: 5,
+            margin: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Participantes",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   TextField(
                     controller: nomeController,
@@ -53,11 +73,13 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   const SizedBox(height: 10),
 
                   ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00C49A),
+                    ),
                     onPressed: () {
                       if (nomeController.text.isNotEmpty) {
                         ref.read(contaProvider.notifier)
                             .adicionarParticipante(nomeController.text);
-
                         nomeController.clear();
                       }
                     },
@@ -80,21 +102,24 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const Divider(height: 30),
 
-          // Artigos
+          // ---------------- ARTIGOS ----------------
           Card(
-            elevation: 3,
-            margin: const EdgeInsets.all(10),
+            elevation: 5,
+            margin: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Artigos",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   TextField(
                     controller: artigoNomeController,
@@ -117,32 +142,45 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          ref.read(contaProvider.notifier)
-                              .decrementarQuantidade();
-                        },
-                        icon: const Icon(Icons.remove),
+                      _circleBtn(
+                        Icons.remove,
+                        () => ref.read(contaProvider.notifier)
+                            .decrementarQuantidade(),
+                        const Color(0xFF00C49A), // azul
                       ),
-                      Text("${conta.quantidadeAtual}"),
-                      IconButton(
-                        onPressed: () {
-                          ref.read(contaProvider.notifier)
-                              .incrementarQuantidade();
-                        },
-                        icon: const Icon(Icons.add),
+
+                      const SizedBox(width: 18),
+
+                      Text(
+                        "${conta.quantidadeAtual}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(width: 18),
+
+                      _circleBtn(
+                        Icons.add,
+                        () => ref.read(contaProvider.notifier)
+                            .incrementarQuantidade(),
+                        const Color(0xFF00C49A), // verde
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00C49A),
+                    ),
                     onPressed: () {
                       if (artigoNomeController.text.isNotEmpty &&
                           precoController.text.isNotEmpty) {
@@ -166,7 +204,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                           leading: const Icon(Icons.fastfood),
                           title: Text(a.nome),
                           subtitle: Text(
-                              "${a.preco.toStringAsFixed(2)}€ x${a.quantidade}"),
+                            "${a.preco.toStringAsFixed(2)}€ x${a.quantidade}",
+                          ),
                         ),
                       )),
                 ],
@@ -176,7 +215,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // Botão Avançar
+          // ---------------- AVANÇAR ----------------
           Padding(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
@@ -201,9 +240,12 @@ class _Ecra1State extends ConsumerState<Ecra1> {
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(14),
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF0077B6),
               ),
-              child: const Text("AVANÇAR"),
+              child: const Text(
+                "AVANÇAR",
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ),
         ],

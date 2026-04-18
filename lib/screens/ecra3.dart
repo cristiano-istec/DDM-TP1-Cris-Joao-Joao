@@ -30,31 +30,46 @@ class Ecra3 extends ConsumerWidget {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF0FAF7),
       appBar: AppBar(
         title: const Text("Conta Final"),
+        backgroundColor: const Color(0xFF00C49A),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+
           const Text(
-            "Resumo por Participante",
+            "Resumo",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
-          ...conta.participantes.asMap().entries.map((entry) {
-            final index = entry.key;
-            final participante = entry.value;
-
-            return Card(
-              child: ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(participante.nome),
-                trailing: Text(
-                  "${totais[index]!.toStringAsFixed(2)} €",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+          ...conta.participantes.asMap().entries.map((p) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                  )
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(p.value.nome),
+                  Text(
+                    "${totais[p.key]!.toStringAsFixed(2)}€",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             );
           }),
