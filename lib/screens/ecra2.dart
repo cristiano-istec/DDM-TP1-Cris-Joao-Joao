@@ -10,54 +10,41 @@ class Ecra2 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final conta = ref.watch(contaProvider);
 
-    final participantes = conta.participantes;
-    final artigos = conta.artigos;
-    final atribuicoes = conta.atribuicoes;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dividir Conta"),
       ),
       body: ListView(
         children: [
-          // Lista de Artigos
-          ...artigos.asMap().entries.map((entry) {
+          ...conta.artigos.asMap().entries.map((entry) {
             final index = entry.key;
             final artigo = entry.value;
-
-            final selecionados = atribuicoes[index] ?? [];
+            final selecionados = conta.atribuicoes[index] ?? [];
 
             return Card(
               margin: const EdgeInsets.all(10),
               child: ExpansionTile(
                 title: Text(artigo.nome),
                 subtitle: Text(
-                  "${artigo.preco.toStringAsFixed(2)}€ x${artigo.quantidade}",
-                ),
+                    "${artigo.preco.toStringAsFixed(2)}€ x${artigo.quantidade}"),
                 children: [
-                  // Botão dividir por todos
                   TextButton(
                     onPressed: () {
-                      ref
-                          .read(contaProvider.notifier)
+                      ref.read(contaProvider.notifier)
                           .dividirPorTodos(index);
                     },
                     child: const Text("Dividir por todos"),
                   ),
 
-                  // Checkboxes
-                  ...participantes.asMap().entries.map((pEntry) {
+                  ...conta.participantes.asMap().entries.map((pEntry) {
                     final pIndex = pEntry.key;
                     final participante = pEntry.value;
 
-                    final isSelected = selecionados.contains(pIndex);
-
                     return CheckboxListTile(
                       title: Text(participante.nome),
-                      value: isSelected,
+                      value: selecionados.contains(pIndex),
                       onChanged: (_) {
-                        ref
-                            .read(contaProvider.notifier)
+                        ref.read(contaProvider.notifier)
                             .toggleParticipante(index, pIndex);
                       },
                     );
@@ -69,16 +56,14 @@ class Ecra2 extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          // Botão Final
           Padding(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () {
-                // Validação
                 bool valido = true;
 
-                for (int i = 0; i < artigos.length; i++) {
-                  if ((atribuicoes[i] ?? []).isEmpty) {
+                for (int i = 0; i < conta.artigos.length; i++) {
+                  if ((conta.atribuicoes[i] ?? []).isEmpty) {
                     valido = false;
                     break;
                   }
@@ -88,19 +73,15 @@ class Ecra2 extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        "Todos os artigos devem ter pelo menos 1 participante",
-                      ),
+                          "Todos os artigos devem ter pelo menos 1 participante"),
                     ),
                   );
                   return;
                 }
 
-                // Navegação
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const Ecra3(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const Ecra3()),
                 );
               },
               child: const Text("Calcular Conta"),

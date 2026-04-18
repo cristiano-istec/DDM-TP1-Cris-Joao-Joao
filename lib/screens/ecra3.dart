@@ -9,32 +9,23 @@ class Ecra3 extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final conta = ref.watch(contaProvider);
 
-    final participantes = conta.participantes;
-    final artigos = conta.artigos;
-    final atribuicoes = conta.atribuicoes;
-
-    // Mapa de Totais
     Map<int, double> totais = {};
 
-    // inicializar
-    for (int i = 0; i < participantes.length; i++) {
+    for (int i = 0; i < conta.participantes.length; i++) {
       totais[i] = 0;
     }
 
-    // Calcular
-    for (int i = 0; i < artigos.length; i++) {
-      final artigo = artigos[i];
-
-      final selecionados = atribuicoes[i] ?? [];
+    for (int i = 0; i < conta.artigos.length; i++) {
+      final artigo = conta.artigos[i];
+      final selecionados = conta.atribuicoes[i] ?? [];
 
       if (selecionados.isEmpty) continue;
 
-      double totalArtigo = artigo.preco * artigo.quantidade;
+      double total = artigo.preco * artigo.quantidade;
+      double porPessoa = total / selecionados.length;
 
-      double valorPorPessoa = totalArtigo / selecionados.length;
-
-      for (var pIndex in selecionados) {
-        totais[pIndex] = totais[pIndex]! + valorPorPessoa;
+      for (var p in selecionados) {
+        totais[p] = totais[p]! + porPessoa;
       }
     }
 
@@ -52,18 +43,16 @@ class Ecra3 extends ConsumerWidget {
 
           const SizedBox(height: 10),
 
-          // Mostrar Resultado
-          ...participantes.asMap().entries.map((entry) {
+          ...conta.participantes.asMap().entries.map((entry) {
             final index = entry.key;
             final participante = entry.value;
 
-            final total = totais[index] ?? 0;
-
             return Card(
               child: ListTile(
+                leading: const Icon(Icons.person),
                 title: Text(participante.nome),
                 trailing: Text(
-                  "${total.toStringAsFixed(2)} €",
+                  "${totais[index]!.toStringAsFixed(2)} €",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
