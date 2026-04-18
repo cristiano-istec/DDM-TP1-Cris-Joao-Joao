@@ -17,7 +17,7 @@ class Ecra1 extends ConsumerStatefulWidget {
 
 class _Ecra1State extends ConsumerState<Ecra1> {
   final nomeController = TextEditingController();
-  final artigoNomeController = TextEditingController();
+  final artigoController = TextEditingController();
   final precoController = TextEditingController();
 
   @override
@@ -31,16 +31,21 @@ class _Ecra1State extends ConsumerState<Ecra1> {
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
 
+          // ================= PARTICIPANTES =================
           NeonCard(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
               children: [
-                const Text("Participantes",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+
+                const Text(
+                  "Participantes",
+                  style: TextStyle(color: Colors.white),
+                ),
 
                 const SizedBox(height: 10),
 
@@ -55,17 +60,24 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   text: "Adicionar",
                   onPressed: () {
                     if (nomeController.text.isEmpty) return;
+
                     ref.read(contaProvider.notifier)
                         .adicionarParticipante(nomeController.text);
+
                     nomeController.clear();
                   },
                 ),
 
+                const SizedBox(height: 10),
+
                 ...conta.participantes.map((p) => ListTile(
+                      contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.person,
                           color: Colors.white),
-                      title: Text(p.nome,
-                          style: const TextStyle(color: Colors.white)),
+                      title: Text(
+                        p.nome,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     )),
               ],
             ),
@@ -73,19 +85,22 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 16),
 
+          // ================= ARTIGOS =================
           NeonCard(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, // FIX AQUI
               children: [
 
-                const Text("Artigos",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                const Text(
+                  "Artigos",
+                  style: TextStyle(color: Colors.white),
+                ),
 
                 const SizedBox(height: 10),
 
                 NeonInput(
-                  controller: artigoNomeController,
-                  label: "Nome artigo",
+                  controller: artigoController,
+                  label: "Artigo",
                 ),
 
                 const SizedBox(height: 10),
@@ -105,26 +120,26 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                     NeonCircleButton(
                       icon: Icons.remove,
                       color: const Color(0xFF8B00FF),
-                      onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .decrementarQuantidade();
-                      },
+                      onPressed: () => ref
+                          .read(contaProvider.notifier)
+                          .decrementarQuantidade(),
                     ),
 
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 10),
 
-                    Text("${conta.quantidadeAtual}",
-                        style: const TextStyle(color: Colors.white)),
+                    Text(
+                      "${conta.quantidadeAtual}",
+                      style: const TextStyle(color: Colors.white),
+                    ),
 
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 10),
 
                     NeonCircleButton(
                       icon: Icons.add,
                       color: const Color(0xFF00FFC6),
-                      onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .incrementarQuantidade();
-                      },
+                      onPressed: () => ref
+                          .read(contaProvider.notifier)
+                          .incrementarQuantidade(),
                     ),
                   ],
                 ),
@@ -132,26 +147,39 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 const SizedBox(height: 10),
 
                 NeonButton(
-                  text: "Adicionar Artigo",
+                  text: "Adicionar artigo",
                   onPressed: () {
-                    if (artigoNomeController.text.isEmpty ||
+                    if (artigoController.text.isEmpty ||
                         precoController.text.isEmpty) return;
 
                     ref.read(contaProvider.notifier).adicionarArtigo(
-                          artigoNomeController.text,
+                          artigoController.text,
                           double.parse(precoController.text),
                         );
 
-                    artigoNomeController.clear();
+                    artigoController.clear();
                     precoController.clear();
                   },
                 ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  "Lista de artigos",
+                  style: TextStyle(color: Colors.grey),
+                ),
+
+                ...conta.artigos.map((a) => Text(
+                      "${a.nome} - ${a.preco}€ x${a.quantidade}",
+                      style: const TextStyle(color: Colors.white),
+                    )),
               ],
             ),
           ),
 
           const SizedBox(height: 20),
 
+          // ================= AVANÇAR =================
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {
