@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/providers.dart';
 
+import '../widgets/neon_card.dart';
+
 class Ecra3 extends ConsumerWidget {
   const Ecra3({super.key});
 
@@ -39,22 +41,11 @@ class Ecra3 extends ConsumerWidget {
         children: [
 
           ...conta.participantes.asMap().entries.map((p) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF00FFC6).withOpacity(0.3),
-                    blurRadius: 20,
-                  )
-                ],
-              ),
+            return NeonCard(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+
                   Text(p.value.nome,
                       style: const TextStyle(color: Colors.white)),
 

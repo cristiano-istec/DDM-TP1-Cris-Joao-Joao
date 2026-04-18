@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/providers.dart';
 import 'ecra3.dart';
 
+import '../widgets/neon_card.dart';
+import '../widgets/neon_button.dart';
+
 class Ecra2 extends ConsumerWidget {
   const Ecra2({super.key});
 
@@ -25,19 +28,7 @@ class Ecra2 extends ConsumerWidget {
             final i = entry.key;
             final artigo = entry.value;
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF00FFC6).withOpacity(0.3),
-                    blurRadius: 20,
-                  )
-                ],
-              ),
+            return NeonCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -49,10 +40,14 @@ class Ecra2 extends ConsumerWidget {
                       style: const TextStyle(color: Colors.grey)),
 
                   TextButton(
-                    onPressed: () =>
-                        ref.read(contaProvider.notifier).dividirPorTodos(i),
-                    child: const Text("Dividir por todos",
-                        style: TextStyle(color: Color(0xFF00FFC6))),
+                    onPressed: () {
+                      ref.read(contaProvider.notifier)
+                          .dividirPorTodos(i);
+                    },
+                    child: const Text(
+                      "Dividir por todos",
+                      style: TextStyle(color: Color(0xFF00FFC6)),
+                    ),
                   ),
 
                   ...conta.participantes.asMap().entries.map((p) {
@@ -74,19 +69,14 @@ class Ecra2 extends ConsumerWidget {
             );
           }),
 
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8B00FF),
-              shadowColor: const Color(0xFF8B00FF),
-              elevation: 10,
-            ),
+          NeonButton(
+            text: "CALCULAR",
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const Ecra3()),
               );
             },
-            child: const Text("CALCULAR"),
           )
         ],
       ),
