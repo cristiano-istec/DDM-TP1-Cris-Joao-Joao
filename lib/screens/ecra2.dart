@@ -11,10 +11,11 @@ class Ecra2 extends ConsumerWidget {
     final conta = ref.watch(contaProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FAF7),
+      backgroundColor: const Color(0xFF0D0D0D),
       appBar: AppBar(
         title: const Text("Dividir Conta"),
-        backgroundColor: const Color(0xFF00C49A),
+        backgroundColor: const Color(0xFF00FFC6),
+        foregroundColor: Colors.black,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -23,46 +24,44 @@ class Ecra2 extends ConsumerWidget {
           ...conta.artigos.asMap().entries.map((entry) {
             final i = entry.key;
             final artigo = entry.value;
-            final selecionados = conta.atribuicoes[i] ?? [];
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFF1A1A1A),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                  )
-                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    artigo.nome,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
 
-                  Text("${artigo.preco}€ x${artigo.quantidade}"),
+                  Text(artigo.nome,
+                      style: const TextStyle(color: Colors.white)),
+
+                  Text("${artigo.preco}€ x${artigo.quantidade}",
+                      style: const TextStyle(color: Colors.grey)),
 
                   TextButton(
-                    onPressed: () {
-                      ref.read(contaProvider.notifier)
-                          .dividirPorTodos(i);
-                    },
-                    child: const Text("Dividir por todos"),
+                    onPressed: () => ref
+                        .read(contaProvider.notifier)
+                        .dividirPorTodos(i),
+                    child: const Text("Dividir por todos",
+                        style: TextStyle(color: Color(0xFF00FFC6))),
                   ),
 
                   ...conta.participantes.asMap().entries.map((p) {
+                    final selecionados =
+                        conta.atribuicoes[i] ?? [];
+
                     return CheckboxListTile(
-                      title: Text(p.value.nome),
+                      activeColor: const Color(0xFF00FFC6),
+                      title: Text(p.value.nome,
+                          style: const TextStyle(color: Colors.white)),
                       value: selecionados.contains(p.key),
                       onChanged: (_) {
-                        ref.read(contaProvider.notifier)
+                        ref
+                            .read(contaProvider.notifier)
                             .toggleParticipante(i, p.key);
                       },
                     );
@@ -72,12 +71,9 @@ class Ecra2 extends ConsumerWidget {
             );
           }),
 
-          const SizedBox(height: 20),
-
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0077B6),
-              padding: const EdgeInsets.all(14),
+              backgroundColor: const Color(0xFF00FFC6),
             ),
             onPressed: () {
               Navigator.push(
@@ -85,7 +81,7 @@ class Ecra2 extends ConsumerWidget {
                 MaterialPageRoute(builder: (_) => const Ecra3()),
               );
             },
-            child: const Text("Calcular Conta"),
+            child: const Text("CALCULAR"),
           )
         ],
       ),

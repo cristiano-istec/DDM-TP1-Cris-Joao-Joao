@@ -19,8 +19,6 @@ class Ecra3 extends ConsumerWidget {
       final artigo = conta.artigos[i];
       final selecionados = conta.atribuicoes[i] ?? [];
 
-      if (selecionados.isEmpty) continue;
-
       double total = artigo.preco * artigo.quantidade;
       double porPessoa = total / selecionados.length;
 
@@ -30,43 +28,34 @@ class Ecra3 extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FAF7),
+      backgroundColor: const Color(0xFF0D0D0D),
       appBar: AppBar(
         title: const Text("Conta Final"),
-        backgroundColor: const Color(0xFF00C49A),
+        backgroundColor: const Color(0xFF00FFC6),
+        foregroundColor: Colors.black,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
 
-          const Text(
-            "Resumo",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
           ...conta.participantes.asMap().entries.map((p) {
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFF1A1A1A),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                  )
-                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(p.value.nome),
+                  Text(p.value.nome,
+                      style: const TextStyle(color: Colors.white)),
+
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
                     style: const TextStyle(
+                        color: Color(0xFF00FFC6),
                         fontWeight: FontWeight.bold),
                   ),
                 ],
