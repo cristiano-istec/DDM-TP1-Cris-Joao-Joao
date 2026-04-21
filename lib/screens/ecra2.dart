@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/providers.dart';
+import '../providers/providers.dart';
 import 'ecra3.dart';
 
 import '../widgets/neon_card.dart';
