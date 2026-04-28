@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../providers/providers.dart';
 import 'ecra2.dart';
 
@@ -58,7 +59,27 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 NeonButton(
                   text: "Adicionar participante",
                   onPressed: () {
-                    if (nomeController.text.isEmpty) return;
+                    if (nomeController.text.isEmpty) { //verifica se o campo está vazio
+                      Fluttertoast.showToast(
+                        msg: "Por favor, insira um nome.",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.black87,
+                        textColor: Colors.white,
+                      );
+                      return;
+                    }
+
+                    if (conta.participantes.any((pessoa) => pessoa.nome == nomeController.text)) { // Verifica se o nome já existe
+                      Fluttertoast.showToast( 
+                        msg: "Este nome já foi adicionado.",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.black87,
+                        textColor: Colors.white,
+                      );
+                      return;
+                    }
 
                     ref.read(contaProvider.notifier)
                         .adicionarParticipante(nomeController.text);
@@ -167,11 +188,36 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   text: "Adicionar artigo",
                   onPressed: () {
                     if (artigoController.text.isEmpty ||
-                        precoController.text.isEmpty) return;
+                        precoController.text.isEmpty) {
+                      Fluttertoast.showToast(
+                        msg: "Por favor, preencha todos os campos.",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.black87,
+                        textColor: Colors.white,
+                      );
+                      return;
+                    }
+
+                    final preco = double.tryParse(
+                      precoController.text.replaceAll(',', '.'),
+                    );
+                    if (preco == null || preco <= 0) {
+                      Fluttertoast.showToast(
+                        msg: preco == null
+                            ? "Digite um preço válido."
+                            : "O preço deve ser um valor positivo.",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.black87,
+                        textColor: Colors.white,
+                      );
+                      return;
+                    }
 
                     ref.read(contaProvider.notifier).adicionarArtigo(
                           artigoController.text,
-                          double.parse(precoController.text),
+                          preco,
                         );
 
                     artigoController.clear();
@@ -215,7 +261,16 @@ class _Ecra1State extends ConsumerState<Ecra1> {
             text: "AVANÇAR",
             onPressed: () {
               if (conta.participantes.length < 2 ||
-                  conta.artigos.isEmpty) return;
+                  conta.artigos.isEmpty) {
+                Fluttertoast.showToast(
+                  msg: "Por favor, adicione pelo menos 2 participantes e 1 artigo.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white,
+                );
+                return;
+              }
 
               Navigator.push(
                 context,
