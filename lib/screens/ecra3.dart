@@ -19,16 +19,17 @@ class Ecra3 extends ConsumerWidget {
       totais[i] = 0;
     }
 
-    // calcular divisão de custos
+    // calcular divisão de custos com base em quantidades
     for (int i = 0; i < conta.artigos.length; i++) {
       final artigo = conta.artigos[i];
-      final selecionados = conta.atribuicoes[i] ?? [];
+      final atribuicoes = conta.atribuicoes[i] ?? {};
 
-      double total = artigo.preco * artigo.quantidade;
-      double porPessoa = total / selecionados.length;
+      double precoUnitario = artigo.preco;
 
-      for (var p in selecionados) {
-        totais[p] = totais[p]! + porPessoa;
+      // Para cada participante, adicionar o custo baseado na quantidade consumida
+      for (int p = 0; p < conta.participantes.length; p++) {
+        final qtdConsumida = atribuicoes[p] ?? 0;
+        totais[p] = totais[p]! + (precoUnitario * qtdConsumida);
       }
     }
 

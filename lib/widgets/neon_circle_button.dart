@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class NeonCircleButton extends StatelessWidget {
   final IconData icon;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color color;
 
   const NeonCircleButton({
     super.key,
     required this.icon,
-    required this.onPressed,
+    this.onPressed,
     required this.color,
   });
 

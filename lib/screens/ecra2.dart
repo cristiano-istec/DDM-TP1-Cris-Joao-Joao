@@ -5,6 +5,7 @@ import 'ecra3.dart';
 
 import '../widgets/neon_card.dart';
 import '../widgets/neon_button.dart';
+import '../widgets/neon_circle_button.dart';
 
 class Ecra2 extends ConsumerWidget {
   const Ecra2({super.key});
@@ -30,6 +31,9 @@ class Ecra2 extends ConsumerWidget {
           ...conta.artigos.asMap().entries.map((entry) {
             final i = entry.key;
             final artigo = entry.value;
+            final atribuicoes = conta.atribuicoes[i] ?? {};
+            final totalAtribuido = atribuicoes.values.fold<int>(0, (sum, value) => sum + value);
+            final podeAdicionar = totalAtribuido < artigo.quantidade;
 
             return NeonCard(
               child: Column(
@@ -47,31 +51,60 @@ class Ecra2 extends ConsumerWidget {
                       ref.read(contaProvider.notifier)
                           .dividirPorTodos(i);
                     },
-                    child: const Text(
+                    child: Text(
                       "Dividir por todos",
-                      style: TextStyle(color: Color(0xFF00FFC6)),
+                      style: const TextStyle(color: Color(0xFF00FFC6)),
                     ),
                   ),
 
-                  // seleção de participantes
+                  // Atribuição de quantidade por participante
                   ...conta.participantes.asMap().entries.map((p) {
-                    final selecionados = conta.atribuicoes[i] ?? [];
+                    final participanteIndex = p.key;
+                    final participante = p.value;
+                    final qtdAtribuida = conta.atribuicoes[i]?[participanteIndex] ?? 0;
 
-                    return CheckboxListTile(
-                      activeColor: const Color(0xFF00FFC6),
-
-                      title: Text(p.value.nome,
-                          style: const TextStyle(color: Colors.white)),
-
-                      // verifica se está atribuído
-                      value: selecionados.contains(p.key),
-
-                      onChanged: (_) {
-                        ref.read(contaProvider.notifier)
-                            .toggleParticipante(i, p.key);
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(participante.nome,
+                              style: const TextStyle(color: Colors.white)),
+                          Row(
+                            children: [
+                              NeonCircleButton(
+                                icon: Icons.remove,
+                                color: const Color(0xFF8B00FF),
+                                onPressed: () {
+                                  if (qtdAtribuida > 0) {
+                                    ref.read(contaProvider.notifier)
+                                        .setQuantidadeParticipante(i, participanteIndex, qtdAtribuida - 1);
+                                  }
+                                },
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "$qtdAtribuida",
+                                style: const TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                              const SizedBox(width: 12),
+                              NeonCircleButton(
+                                icon: Icons.add,
+                                color: const Color(0xFF00FFC6),
+                                onPressed: podeAdicionar
+                                    ? () {
+                                        ref.read(contaProvider.notifier)
+                                            .setQuantidadeParticipante(i, participanteIndex, qtdAtribuida + 1);
+                                      }
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     );
                   }),
+
                 ],
               ),
             );
