@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
 import 'ecra2.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widgets/neon_card.dart';
 import '../widgets/neon_button.dart';
@@ -209,6 +210,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           ),
 
           const SizedBox(height: 20),
+
+         
 
           // Avançar
           NeonButton(

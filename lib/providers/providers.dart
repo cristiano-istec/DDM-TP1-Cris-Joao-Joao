@@ -1,15 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/participante.dart';
 import '../models/artigo.dart';
+import 'package:uuid/uuid.dart';
 
 class ContaNotifier extends Notifier<ContaState> {
   @override
   ContaState build() {
     return ContaState(
+      id: Uuid(),
       participantes: [],
       artigos: [],
       quantidadeAtual: 1,
       atribuicoes: {},
+      imagem: '',
     );
   }
 
@@ -108,16 +111,20 @@ class ContaNotifier extends Notifier<ContaState> {
 }
 
 class ContaState {
+  final Uuid id;
   final List<Participante> participantes;
   final List<Artigo> artigos;
   final int quantidadeAtual;
   final Map<int, List<int>> atribuicoes;
+  final String imagem;
 
   ContaState({
+    required this.id,
     required this.participantes,
     required this.artigos,
     required this.quantidadeAtual,
     required this.atribuicoes,
+    required this.imagem,
   });
 
   ContaState copyWith({
@@ -127,13 +134,16 @@ class ContaState {
     Map<int, List<int>>? atribuicoes,
   }) {
     return ContaState(
+      id: id, 
       participantes: participantes ?? this.participantes,
       artigos: artigos ?? this.artigos,
       quantidadeAtual: quantidadeAtual ?? this.quantidadeAtual,
       atribuicoes: atribuicoes ?? this.atribuicoes,
+      imagem: imagem,
     );
   }
 }
+
 
 final contaProvider =
     NotifierProvider<ContaNotifier, ContaState>(ContaNotifier.new);
