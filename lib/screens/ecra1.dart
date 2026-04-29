@@ -51,7 +51,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
+        children: <Widget>[
 
           // Participantes
           NeonCard(
@@ -227,7 +227,57 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           const SizedBox(height: 20),
 
 
+// Recibo
+NeonCard(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Recibo",
+        style: TextStyle(color: Colors.white),
+      ),
 
+      const SizedBox(height: 12),
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: () {
+              adicionarImagem(ImageSource.gallery);
+            },
+            icon: const Icon(
+              Icons.add_photo_alternate_outlined,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+
+          const SizedBox(width: 20),
+
+          IconButton(
+            onPressed: () {
+              adicionarImagem(ImageSource.camera);
+            },
+            icon: const Icon(
+              Icons.add_a_photo_outlined,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 10),
+
+      if (reciboImagem != null)
+        const Text(
+          "Imagem associada com sucesso",
+          style: TextStyle(color: Colors.greenAccent),
+        ),
+    ],
+  ),
+),
 
           // Avançar
           NeonButton(
