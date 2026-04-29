@@ -20,6 +20,21 @@ class _Ecra1State extends ConsumerState<Ecra1> {
   final nomeController = TextEditingController();
   final artigoController = TextEditingController();
   final precoController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  XFile? reciboImagem;
+
+  Future<void> adicionarImagem(ImageSource origem) async {
+  final XFile? imagem = await _picker.pickImage(
+    source: origem,
+    imageQuality: 85,
+  );
+
+  if (imagem != null) {
+    setState(() {
+      reciboImagem = imagem;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +226,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-         
+
+
 
           // Avançar
           NeonButton(
