@@ -36,12 +36,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             key: centerKey,
             itemCount: bottom.length,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
-                alignment: Alignment.center,
-                color: Colors.blue[200 + bottom[index] % 4 * 100],
-                height: 100 + bottom[index] % 4 * 20.0,
-                child: Text('Item: ${bottom[index]}'),
-              );
+              return ListTile(
+                title: Text('Item ${bottom[index]}'),
+                onTap: () =>  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Ecra1()),
+               )  
+             );
             },
           ),
         ],
