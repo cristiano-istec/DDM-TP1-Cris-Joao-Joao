@@ -18,7 +18,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const Key centerKey = ValueKey<String>('bottom-sliver-list');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Press on the plus to add items above and below'),
+        title: const Text('Clica em algum botão para iniciar uma conta'),
         leading: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
@@ -37,12 +37,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             itemCount: bottom.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                title: Text('Item ${bottom[index]}'),
+                title: Text('Conta ${bottom[index]}'),
+                titleAlignment: ListTileTitleAlignment.center,
                 onTap: () =>  Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Ecra1()),
-               )  
-             );
+                ),
+                onLongPress: () => setState(() {
+                  bottom.removeAt(index);
+                  },  
+                )
+              );
             },
           ),
         ],
