@@ -32,6 +32,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF00FFC6),
+        foregroundColor: Colors.black,
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Clique para editar as contas, segure para deletar uma conta',
+              ),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        },
+        child: const Icon(Icons.info),
+      ),
       body: CustomScrollView(
         center: centerKey,
         slivers: <Widget>[
