@@ -17,8 +17,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     const Key centerKey = ValueKey<String>('bottom-sliver-list');
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Clica em algum botão para iniciar uma conta'),
+        backgroundColor: const Color(0xFF00FFC6),
+        foregroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
@@ -36,17 +39,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             key: centerKey,
             itemCount: bottom.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text('Conta ${bottom[index]}'),
-                titleAlignment: ListTileTitleAlignment.center,
-                onTap: () =>  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Ecra1()),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF00FFC6), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF00FFC6).withOpacity(0.5), // glow verde
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    textColor: Colors.white,
+                    title: Text('Conta ${bottom[index]}'),
+                    titleAlignment: ListTileTitleAlignment.center,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Ecra1()),
+                    ),
+                    onLongPress: () => setState(() {
+                      bottom.removeAt(index);
+                    }),
+                  ),
                 ),
-                onLongPress: () => setState(() {
-                  bottom.removeAt(index);
-                  },  
-                )
               );
             },
           ),
