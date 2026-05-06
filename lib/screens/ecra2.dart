@@ -7,11 +7,13 @@ import '../widgets/neon_card.dart';
 import '../widgets/neon_button.dart';
 
 class Ecra2 extends ConsumerWidget {
-  const Ecra2({super.key});
+  final int contaIndex;
+
+  const Ecra2({super.key, required this.contaIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final conta = ref.watch(contaProvider);
+    final conta = ref.watch(contasProvider)[contaIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
@@ -44,8 +46,8 @@ class Ecra2 extends ConsumerWidget {
 
                   TextButton(
                     onPressed: () {
-                      ref.read(contaProvider.notifier)
-                          .dividirPorTodos(i);
+                      ref.read(contasProvider.notifier)
+                          .dividirPorTodos(contaIndex, i);
                     },
                     child: const Text(
                       "Dividir por todos",
@@ -63,12 +65,11 @@ class Ecra2 extends ConsumerWidget {
                       title: Text(p.value.nome,
                           style: const TextStyle(color: Colors.white)),
 
-                      // verifica se está atribuído
                       value: selecionados.contains(p.key),
 
                       onChanged: (_) {
-                        ref.read(contaProvider.notifier)
-                            .toggleParticipante(i, p.key);
+                        ref.read(contasProvider.notifier)
+                            .toggleParticipante(contaIndex, i, p.key); 
                       },
                     );
                   }),
@@ -82,7 +83,9 @@ class Ecra2 extends ConsumerWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const Ecra3()),
+                MaterialPageRoute(
+                  builder: (_) => Ecra3(contaIndex: contaIndex), 
+                ),
               );
             },
           ),

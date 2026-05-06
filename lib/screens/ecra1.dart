@@ -10,7 +10,9 @@ import '../widgets/neon_circle_button.dart';
 import '../widgets/neon_input.dart';
 
 class Ecra1 extends ConsumerStatefulWidget {
-  const Ecra1({super.key});
+  final int contaIndex;
+
+  const Ecra1({super.key, required this.contaIndex});
 
   @override
   ConsumerState<Ecra1> createState() => _Ecra1State();
@@ -23,7 +25,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
   @override
   Widget build(BuildContext context) {
-    final conta = ref.watch(contaProvider);
+    final conta = ref.watch(contasProvider)[widget.contaIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
@@ -59,7 +61,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 NeonButton(
                   text: "Adicionar participante",
                   onPressed: () {
-                    if (nomeController.text.isEmpty) { //verifica se o campo está vazio
+                    if (nomeController.text.isEmpty) {
                       Fluttertoast.showToast(
                         msg: "Por favor, insira um nome.",
                         toastLength: Toast.LENGTH_SHORT,
@@ -70,8 +72,9 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       return;
                     }
 
-                    if (conta.participantes.any((pessoa) => pessoa.nome == nomeController.text)) { // Verifica se o nome já existe
-                      Fluttertoast.showToast( 
+                    if (conta.participantes.any((pessoa) =>
+                        pessoa.nome == nomeController.text)) {
+                      Fluttertoast.showToast(
                         msg: "Este nome já foi adicionado.",
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
@@ -81,8 +84,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       return;
                     }
 
-                    ref.read(contaProvider.notifier)
-                        .adicionarParticipante(nomeController.text);
+                    ref.read(contasProvider.notifier)
+                        .adicionarParticipante(widget.contaIndex, nomeController.text);
 
                     nomeController.clear();
                   },
@@ -108,8 +111,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                         icon: const Icon(Icons.delete,
                             color: Colors.red),
                         onPressed: () {
-                          ref.read(contaProvider.notifier)
-                              .removerParticipante(i);
+                          ref.read(contasProvider.notifier)
+                              .removerParticipante(widget.contaIndex, i);
                         },
                       ),
                     ),
@@ -147,7 +150,6 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
                 const SizedBox(height: 16),
 
-                // QUANTIDADE
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -156,8 +158,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       icon: Icons.remove,
                       color: const Color(0xFF8B00FF),
                       onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .decrementarQuantidade();
+                        ref.read(contasProvider.notifier)
+                            .decrementarQuantidade(widget.contaIndex);
                       },
                     ),
 
@@ -175,8 +177,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       icon: Icons.add,
                       color: const Color(0xFF00FFC6),
                       onPressed: () {
-                        ref.read(contaProvider.notifier)
-                            .incrementarQuantidade();
+                        ref.read(contasProvider.notifier)
+                            .incrementarQuantidade(widget.contaIndex);
                       },
                     ),
                   ],
@@ -215,7 +217,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                       return;
                     }
 
-                    ref.read(contaProvider.notifier).adicionarArtigo(
+                    ref.read(contasProvider.notifier).adicionarArtigo(
+                          widget.contaIndex,
                           artigoController.text,
                           preco,
                         );
@@ -243,8 +246,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                         icon: const Icon(Icons.delete,
                             color: Colors.red),
                         onPressed: () {
-                          ref.read(contaProvider.notifier)
-                              .removerArtigo(i);
+                          ref.read(contasProvider.notifier)
+                              .removerArtigo(widget.contaIndex, i);
                         },
                       ),
                     ),
@@ -256,7 +259,6 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // Avançar
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {
@@ -274,7 +276,9 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const Ecra2()),
+                MaterialPageRoute(
+                  builder: (_) => Ecra2(contaIndex: widget.contaIndex), 
+                ),
               );
             },
           ),

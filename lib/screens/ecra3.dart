@@ -5,11 +5,13 @@ import '../providers/providers.dart';
 import '../widgets/neon_card.dart';
 
 class Ecra3 extends ConsumerWidget {
-  const Ecra3({super.key});
+  final int contaIndex;
+
+  const Ecra3({super.key, required this.contaIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final conta = ref.watch(contaProvider);
+    final conta = ref.watch(contasProvider)[contaIndex];
 
     // mapa com totais por participante
     Map<int, double> totais = {};
@@ -25,6 +27,10 @@ class Ecra3 extends ConsumerWidget {
       final selecionados = conta.atribuicoes[i] ?? [];
 
       double total = artigo.preco * artigo.quantidade;
+
+      //proteção contra divisão por 0
+      if (selecionados.isEmpty) continue;
+
       double porPessoa = total / selecionados.length;
 
       for (var p in selecionados) {
@@ -50,14 +56,11 @@ class Ecra3 extends ConsumerWidget {
             return NeonCard(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                 children: [
 
-                  // nome participante
                   Text(p.value.nome,
                       style: const TextStyle(color: Colors.white)),
 
-                  // valor a pagar
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
                     style: const TextStyle(
