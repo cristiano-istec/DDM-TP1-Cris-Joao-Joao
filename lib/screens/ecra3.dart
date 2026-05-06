@@ -1,10 +1,9 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/providers.dart';
-
 import '../widgets/neon_card.dart';
 
 class Ecra3 extends ConsumerWidget {
@@ -14,67 +13,53 @@ class Ecra3 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final conta = ref.watch(contasProvider)[contaIndex];
+    final contas = ref.watch(contasProvider);
 
-    // mapa com totais por participante
+    if (contaIndex >= contas.length) {
+      return const Scaffold(
+        body: Center(child: Text("Conta não encontrada")),
+      );
+    }
+
+    final conta = contas[contaIndex];
+
     Map<int, double> totais = {};
 
-    // inicializar valores
     for (int i = 0; i < conta.participantes.length; i++) {
       totais[i] = 0;
     }
 
-    // calcular divisão de custos com base em quantidades
     for (int i = 0; i < conta.artigos.length; i++) {
       final artigo = conta.artigos[i];
       final atribuicoes = conta.atribuicoes[i] ?? {};
 
-      double precoUnitario = artigo.preco;
-
-      // Para cada participante, adicionar o custo baseado na quantidade consumida
       for (int p = 0; p < conta.participantes.length; p++) {
         final qtdConsumida = atribuicoes[p] ?? 0;
-
-        totais[p] =
-            totais[p]! + (precoUnitario * qtdConsumida);
+        totais[p] = totais[p]! + (artigo.preco * qtdConsumida);
       }
     }
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
-
       appBar: AppBar(
         title: const Text("Conta Final"),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
-
         children: [
-
-          // RESULTADO FINAL
           ...conta.participantes.asMap().entries.map((p) {
-
             return NeonCard(
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
-                  // nome participante
                   Text(
                     p.value.nome,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: const TextStyle(color: Colors.white),
                   ),
-
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
-
                     style: const TextStyle(
                       color: Color(0xFF00FFC6),
                       fontWeight: FontWeight.bold,
@@ -85,14 +70,11 @@ class Ecra3 extends ConsumerWidget {
             );
           }),
 
-          // RECIBO
-          if (conta.reciboImagem != null) ...[
-
+          if (conta.reciboBase64 != null) ...[
             const SizedBox(height: 20),
 
             const Text(
               "Recibo",
-
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -103,14 +85,13 @@ class Ecra3 extends ConsumerWidget {
             const SizedBox(height: 10),
 
             ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16),
               child: Container(
                 height: 220,
                 width: double.infinity,
                 color: Colors.black,
-                child: Image.file(
-                  File(conta.reciboImagem!.path),
+                child: Image.memory(
+                  base64Decode(conta.reciboBase64!),
                   fit: BoxFit.contain,
                 ),
               ),
