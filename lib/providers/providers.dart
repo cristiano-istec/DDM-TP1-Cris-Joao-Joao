@@ -222,6 +222,11 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     state = novas;
   }
 
+  void editarNomeConta(int index) {
+    
+  }
+
+
   void guardarRecibo(int contaIndex, XFile imagem) {
     final conta = state[contaIndex];
     final novaConta = conta.copyWith(reciboImagem: imagem);

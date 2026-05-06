@@ -97,10 +97,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             value: 'delete',
                             child: Text('Remover Conta'),
                           ),
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Text('Editar Nome'),
+                          )
                         ],
                       ).then((value) {
                         if (value == 'delete') {
                           ref.read(contasProvider.notifier).removerConta(index);
+                        }
+                        if (value == 'edit') {
+                          ref.read(contasProvider.notifier).editarNomeConta(index);
                         }
                       }); 
                     },
