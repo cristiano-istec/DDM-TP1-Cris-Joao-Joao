@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,77 +36,63 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
     if (imagem == null) return;
 
-    ref.read(contasProvider.notifier).guardarRecibo(widget.contaIndex, imagem);
+    ref.read(contasProvider.notifier).guardarRecibo(
+          widget.contaIndex,
+          imagem,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    final conta = ref.watch(contasProvider)[widget.contaIndex];
+    final contas = ref.watch(contasProvider);
+
+    if (widget.contaIndex >= contas.length) {
+      return const Scaffold(
+        body: Center(child: Text("Conta não encontrada")),
+      );
+    }
+
+    final conta = contas[widget.contaIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
-
       appBar: AppBar(
-        title: const Text("Divisão de Conta"),
+        title: Text(conta.nome),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-
-          // PARTICIPANTES
           NeonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                const Text(
-                  "Participantes",
-                  style: TextStyle(color: Colors.white),
-                ),
-
+                const Text("Participantes", style: TextStyle(color: Colors.white)),
                 const SizedBox(height: 12),
 
-                NeonInput(
-                  controller: nomeController,
-                  label: "Nome",
-                ),
-
+                NeonInput(controller: nomeController, label: "Nome"),
                 const SizedBox(height: 12),
 
                 NeonButton(
                   text: "Adicionar participante",
                   onPressed: () {
+                    final nome = nomeController.text.trim();
 
-                    if (nomeController.text.isEmpty) {
-                      Fluttertoast.showToast(
-                        msg: "Por favor, insira um nome.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black87,
-                        textColor: Colors.white,
-                      );
+                    if (nome.isEmpty) {
+                      Fluttertoast.showToast(msg: "Por favor, insira um nome.");
                       return;
                     }
 
-                    if (conta.participantes.any(
-                      (pessoa) =>
-                          pessoa.nome == nomeController.text,
-                    )) {
-                      Fluttertoast.showToast(
-                        msg: "Este nome já foi adicionado.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black87,
-                        textColor: Colors.white,
-                      );
+                    if (conta.participantes.any((p) => p.nome == nome)) {
+                      Fluttertoast.showToast(msg: "Este nome já foi adicionado.");
                       return;
                     }
 
-                    ref.read(contasProvider.notifier)
-                        .adicionarParticipante(widget.contaIndex, nomeController.text);
+                    ref.read(contasProvider.notifier).adicionarParticipante(
+                          widget.contaIndex,
+                          nome,
+                        );
 
                     nomeController.clear();
                   },
@@ -118,33 +104,18 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   final i = e.key;
                   final p = e.value;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-
-                      leading: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      ),
-
-                      title: Text(
-                        p.nome,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          ref.read(contasProvider.notifier)
-                              .removerParticipante(widget.contaIndex, i);
-                        },
-                      ),
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.person, color: Colors.white),
+                    title: Text(p.nome, style: const TextStyle(color: Colors.white)),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        ref.read(contasProvider.notifier).removerParticipante(
+                              widget.contaIndex,
+                              i,
+                            );
+                      },
                     ),
                   );
                 }),
@@ -154,24 +125,14 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // ARTIGOS
           NeonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                const Text(
-                  "Artigos",
-                  style: TextStyle(color: Colors.white),
-                ),
-
+                const Text("Artigos", style: TextStyle(color: Colors.white)),
                 const SizedBox(height: 12),
 
-                NeonInput(
-                  controller: artigoController,
-                  label: "Artigo",
-                ),
-
+                NeonInput(controller: artigoController, label: "Artigo"),
                 const SizedBox(height: 12),
 
                 NeonInput(
@@ -182,38 +143,31 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
                 const SizedBox(height: 16),
 
-                // QUANTIDADE
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
                     NeonCircleButton(
                       icon: Icons.remove,
                       color: const Color(0xFF8B00FF),
                       onPressed: () {
-                        ref.read(contasProvider.notifier)
-                            .decrementarQuantidade(widget.contaIndex);
+                        ref.read(contasProvider.notifier).decrementarQuantidade(
+                              widget.contaIndex,
+                            );
                       },
                     ),
-
                     const SizedBox(width: 16),
-
                     Text(
                       "${conta.quantidadeAtual}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
-
                     const SizedBox(width: 16),
-
                     NeonCircleButton(
                       icon: Icons.add,
                       color: const Color(0xFF00FFC6),
                       onPressed: () {
-                        ref.read(contasProvider.notifier)
-                            .incrementarQuantidade(widget.contaIndex);
+                        ref.read(contasProvider.notifier).incrementarQuantidade(
+                              widget.contaIndex,
+                            );
                       },
                     ),
                   ],
@@ -224,44 +178,24 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 NeonButton(
                   text: "Adicionar artigo",
                   onPressed: () {
-
-                    if (artigoController.text.isEmpty ||
-                        precoController.text.isEmpty) {
-
-                      Fluttertoast.showToast(
-                        msg:
-                            "Por favor, preencha todos os campos.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black87,
-                        textColor: Colors.white,
-                      );
-
-                      return;
-                    }
-
+                    final nome = artigoController.text.trim();
                     final preco = double.tryParse(
                       precoController.text.replaceAll(',', '.'),
                     );
 
+                    if (nome.isEmpty || precoController.text.isEmpty) {
+                      Fluttertoast.showToast(msg: "Por favor, preencha todos os campos.");
+                      return;
+                    }
+
                     if (preco == null || preco <= 0) {
-
-                      Fluttertoast.showToast(
-                        msg: preco == null
-                            ? "Digite um preço válido."
-                            : "O preço deve ser positivo.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black87,
-                        textColor: Colors.white,
-                      );
-
+                      Fluttertoast.showToast(msg: "Digite um preço válido.");
                       return;
                     }
 
                     ref.read(contasProvider.notifier).adicionarArtigo(
                           widget.contaIndex,
-                          artigoController.text,
+                          nome,
                           preco,
                         );
 
@@ -273,33 +207,23 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                 const SizedBox(height: 12),
 
                 ...conta.artigos.asMap().entries.map((e) {
-
                   final i = e.key;
                   final a = e.value;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-
-                      title: Text(
-                        "${a.nome} - ${a.preco}€ x${a.quantidade}",
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          ref.read(contasProvider.notifier)
-                              .removerArtigo(widget.contaIndex, i);
-                        },
-                      ),
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      "${a.nome} - ${a.preco.toStringAsFixed(2)}€ x${a.quantidade}",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        ref.read(contasProvider.notifier).removerArtigo(
+                              widget.contaIndex,
+                              i,
+                            );
+                      },
                     ),
                   );
                 }),
@@ -309,48 +233,27 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // RECIBO
           NeonCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                const Text(
-                  "Recibo",
-                  style: TextStyle(color: Colors.white),
-                ),
-
+                const Text("Recibo", style: TextStyle(color: Colors.white)),
                 const SizedBox(height: 12),
 
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
                     IconButton(
-                      onPressed: () {
-                        adicionarImagem(
-                          ImageSource.gallery,
-                        );
-                      },
-
+                      onPressed: () => adicionarImagem(ImageSource.gallery),
                       icon: const Icon(
                         Icons.add_photo_alternate_outlined,
                         color: Colors.white,
                         size: 32,
                       ),
                     ),
-
                     const SizedBox(width: 20),
-
                     IconButton(
-                      onPressed: () {
-                        adicionarImagem(
-                          ImageSource.camera,
-                        );
-                      },
-
+                      onPressed: () => adicionarImagem(ImageSource.camera),
                       icon: const Icon(
                         Icons.add_a_photo_outlined,
                         color: Colors.white,
@@ -360,55 +263,38 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                   ],
                 ),
 
-                if (conta.reciboImagem != null) ...[
-
+                if (conta.reciboBase64 != null) ...[
                   const SizedBox(height: 10),
-
                   const Text(
                     "Imagem associada com sucesso",
-                    style: TextStyle(
-                      color: Colors.greenAccent,
-                    ),
+                    style: TextStyle(color: Colors.greenAccent),
                   ),
-
                   const SizedBox(height: 10),
 
                   ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(16),
-
+                    borderRadius: BorderRadius.circular(16),
                     child: Container(
                       height: 220,
                       width: double.infinity,
                       color: Colors.black,
-
-                      child: Image.file(
-                        File(conta.reciboImagem!.path),
+                      child: Image.memory(
+                        base64Decode(conta.reciboBase64!),
                         fit: BoxFit.contain,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 10),
-
                   Center(
                     child: TextButton.icon(
                       onPressed: () {
-                        ref
-                            .read(contasProvider.notifier)
-                            .removerRecibo(widget.contaIndex);
+                        ref.read(contasProvider.notifier).removerRecibo(
+                              widget.contaIndex,
+                            );
                       },
-
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-
+                      icon: const Icon(Icons.delete, color: Colors.red),
                       label: const Text(
                         "Remover recibo",
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
+                        style: TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
@@ -419,23 +305,13 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
           const SizedBox(height: 20),
 
-          // AVANÇAR
           NeonButton(
             text: "AVANÇAR",
             onPressed: () {
-
-              if (conta.participantes.length < 2 ||
-                  conta.artigos.isEmpty) {
-
+              if (conta.participantes.length < 2 || conta.artigos.isEmpty) {
                 Fluttertoast.showToast(
-                  msg:
-                      "Adicione pelo menos 2 participantes e 1 artigo.",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.black87,
-                  textColor: Colors.white,
+                  msg: "Adicione pelo menos 2 participantes e 1 artigo.",
                 );
-
                 return;
               }
 
