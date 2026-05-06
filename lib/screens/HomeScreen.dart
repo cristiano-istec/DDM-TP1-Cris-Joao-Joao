@@ -29,7 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         leading: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            ref.read(contasProvider.notifier).criarConta();
+            ref.read(contasProvider.notifier).adicionarConta();
           },
         ),
       ),

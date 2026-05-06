@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -34,7 +36,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
     if (imagem == null) return;
 
-    ref.read(contaProvider.notifier).guardarRecibo(imagem);
+    ref.read(contasProvider.notifier).guardarRecibo(widget.contaIndex, imagem);
   }
 
   @override
@@ -393,8 +395,8 @@ class _Ecra1State extends ConsumerState<Ecra1> {
                     child: TextButton.icon(
                       onPressed: () {
                         ref
-                            .read(contaProvider.notifier)
-                            .removerRecibo();
+                            .read(contasProvider.notifier)
+                            .removerRecibo(widget.contaIndex);
                       },
 
                       icon: const Icon(

@@ -44,6 +44,7 @@ class Ecra2 extends ConsumerWidget {
 
   Widget _construirLinhaParticipante(
     WidgetRef ref,
+    int contaIndex,
     int indiceArtigo,
     int indiceParticipante,
     String nomeParticipante,
@@ -63,7 +64,8 @@ class Ecra2 extends ConsumerWidget {
                 color: const Color(0xFF8B00FF),
                 onPressed: quantidadeAtual > 0
                     ? () {
-                        ref.read(contaProvider.notifier).setQuantidadeParticipante(
+                        ref.read(contasProvider.notifier).setQuantidadeParticipante(
+                              contaIndex,
                               indiceArtigo,
                               indiceParticipante,
                               quantidadeAtual - 1,
@@ -82,7 +84,8 @@ class Ecra2 extends ConsumerWidget {
                 color: const Color(0xFF00FFC6),
                 onPressed: podeAumentar
                     ? () {
-                        ref.read(contaProvider.notifier).setQuantidadeParticipante(
+                        ref.read(contasProvider.notifier).setQuantidadeParticipante(
+                              contaIndex,
                               indiceArtigo,
                               indiceParticipante,
                               quantidadeAtual + 1,
@@ -155,15 +158,12 @@ class Ecra2 extends ConsumerWidget {
 
                     return _construirLinhaParticipante(
                       ref,
+                      contaIndex,
                       i,
                       participanteIndex,
                       participante.nome,
                       qtdAtribuida,
                       podeAdicionar,
-                      onChanged: (_) {
-                        ref.read(contasProvider.notifier)
-                            .toggleParticipante(contaIndex, i, p.key);
-                      },
                     );
                   }),
 
