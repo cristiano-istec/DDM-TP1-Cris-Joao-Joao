@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../providers/providers.dart';
 import 'ecra2.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widgets/neon_card.dart';
 import '../widgets/neon_button.dart';
@@ -20,6 +23,21 @@ class _Ecra1State extends ConsumerState<Ecra1> {
   final nomeController = TextEditingController();
   final artigoController = TextEditingController();
   final precoController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  XFile? reciboImagem;
+
+  Future<void> adicionarImagem(ImageSource origem) async {
+  final XFile? imagem = await _picker.pickImage(
+    source: origem,
+    imageQuality: 85,
+  );
+
+  if (imagem != null) {
+    setState(() {
+      reciboImagem = imagem;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +54,7 @@ class _Ecra1State extends ConsumerState<Ecra1> {
 
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
+        children: <Widget>[
 
           // Participantes
           NeonCard(
@@ -255,6 +273,77 @@ class _Ecra1State extends ConsumerState<Ecra1> {
           ),
 
           const SizedBox(height: 20),
+
+
+// Recibo
+NeonCard(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Recibo",
+        style: TextStyle(color: Colors.white),
+      ),
+
+      const SizedBox(height: 12),
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: () {
+              adicionarImagem(ImageSource.gallery);
+            },
+            icon: const Icon(
+              Icons.add_photo_alternate_outlined,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+
+          const SizedBox(width: 20),
+
+          IconButton(
+            onPressed: () {
+              adicionarImagem(ImageSource.camera);
+            },
+            icon: const Icon(
+              Icons.add_a_photo_outlined,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 10),
+
+      if (reciboImagem != null) ...[
+        const SizedBox(height: 10),
+
+        const Text(
+          "Imagem associada com sucesso",
+          style: TextStyle(color: Colors.greenAccent),
+        ),
+
+        const SizedBox(height: 10),
+
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: 220,
+            width: double.infinity,
+            color: Colors.black,
+            child: Image.file(
+              File(reciboImagem!.path),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    ],
+  ),
+),
 
           // Avançar
           NeonButton(
