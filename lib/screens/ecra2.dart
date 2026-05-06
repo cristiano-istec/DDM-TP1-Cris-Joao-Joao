@@ -9,7 +9,9 @@ import '../widgets/neon_button.dart';
 import '../widgets/neon_circle_button.dart';
 
 class Ecra2 extends ConsumerWidget {
-  const Ecra2({super.key});
+  final int contaIndex;
+
+  const Ecra2({super.key, required this.contaIndex});
 
   int _somarValores(Iterable<int> valores) {
     return valores.fold<int>(0, (soma, valor) => soma + valor);
@@ -97,9 +99,10 @@ class Ecra2 extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final conta = ref.watch(contaProvider);
+    final conta = ref.watch(contasProvider)[contaIndex];
     final totalArtigos = _totalQuantidadeArtigos(conta);
     final totalAtribuido = _totalQuantidadeAtribuida(conta);
+
 
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
@@ -135,8 +138,8 @@ class Ecra2 extends ConsumerWidget {
 
                   TextButton(
                     onPressed: () {
-                      ref.read(contaProvider.notifier)
-                          .dividirPorTodos(i);
+                      ref.read(contasProvider.notifier)
+                          .dividirPorTodos(contaIndex, i);
                     },
                     child: Text(
                       "Dividir por todos",
@@ -157,6 +160,10 @@ class Ecra2 extends ConsumerWidget {
                       participante.nome,
                       qtdAtribuida,
                       podeAdicionar,
+                      onChanged: (_) {
+                        ref.read(contasProvider.notifier)
+                            .toggleParticipante(contaIndex, i, p.key);
+                      },
                     );
                   }),
 
@@ -174,7 +181,9 @@ class Ecra2 extends ConsumerWidget {
               }
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const Ecra3()),
+                MaterialPageRoute(
+                  builder: (_) => Ecra3(contaIndex: contaIndex),
+                ),
               );
             },
           ),

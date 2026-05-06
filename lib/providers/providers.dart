@@ -5,10 +5,16 @@ import 'package:uuid/uuid.dart';
 import '../models/participante.dart';
 import '../models/artigo.dart';
 
-class ContaNotifier extends Notifier<ContaState> {
+class ContasNotifier extends Notifier<List<ContaState>> {
   @override
-  ContaState build() {
-    return ContaState(
+  List<ContaState> build() {
+      return [];
+    }
+
+  void adicionarConta() {
+    state = [
+      ...state,
+    ContaState(
       id: const Uuid().v4(),
       participantes: [],
       artigos: [],
@@ -18,34 +24,39 @@ class ContaNotifier extends Notifier<ContaState> {
     );
   }
 
-  void adicionarParticipante(String nome) {
-    state = state.copyWith(
+  void adicionarParticipante(int contaIndex, String nome) {
+    final conta = state[contaIndex];
+
+    final novaConta = conta.copyWith(
       participantes: [
-        ...state.participantes,
+        ...conta.participantes,
         Participante(nome: nome),
       ],
     );
+
+    _atualizarConta(contaIndex, novaConta);
   }
 
-  void removerParticipante(int indice) {
-    final novosParticipantes = [...state.participantes];
-    novosParticipantes.removeAt(indice);
+  void removerParticipante(int contaIndex, int index) {
+    final conta = state[contaIndex];
+    final novos = [...conta.participantes];
+    novos.removeAt(index);
 
-    state = state.copyWith(
-      participantes: novosParticipantes,
-    );
+    final novaConta = conta.copyWith(participantes: novos);
+    _atualizarConta(contaIndex, novaConta);
   }
 
-  void adicionarArtigo(String nome, double preco) {
-    final novoIndex = state.artigos.length;
+  void adicionarArtigo(int contaIndex, String nome, double preco) {
+    final conta = state[contaIndex];
+    final novoIndex = conta.artigos.length;
 
-    state = state.copyWith(
+    final novaConta = conta.copyWith(
       artigos: [
-        ...state.artigos,
+        ...conta.artigos,
         Artigo(
           nome: nome,
           preco: preco,
-          quantidade: state.quantidadeAtual,
+          quantidade: conta.quantidadeAtual,
         ),
       ],
       quantidadeAtual: 1,
@@ -54,34 +65,54 @@ class ContaNotifier extends Notifier<ContaState> {
         novoIndex: _criarAtribuicaoInicial(),
       },
     );
+
+    _atualizarConta(contaIndex, novaConta);
   }
 
-  void removerArtigo(int indice) {
-    final novosArtigos = [...state.artigos];
-    novosArtigos.removeAt(indice);
+  void removerArtigo(int contaIndex, int index) {
+    final conta = state[contaIndex];
 
-    final novasAtribuicoes = {...state.atribuicoes};
-    novasAtribuicoes.remove(indice);
+    final novosArtigos = [...conta.artigos];
+    novosArtigos.removeAt(index);
 
-    state = state.copyWith(
+    final novasAtribuicoes = {...conta.atribuicoes};
+    novasAtribuicoes.remove(index);
+
+    final novaConta = conta.copyWith(
       artigos: novosArtigos,
       atribuicoes: novasAtribuicoes,
     );
+
+    _atualizarConta(contaIndex, novaConta);
   }
 
-  void incrementarQuantidade() {
-    state = state.copyWith(
-      quantidadeAtual: state.quantidadeAtual + 1,
+  void incrementarQuantidade(int contaIndex) {
+    final conta = state[contaIndex];
+
+    final novaConta = conta.copyWith(
+      quantidadeAtual: conta.quantidadeAtual + 1,
     );
+
+    _atualizarConta(contaIndex, novaConta);
   }
 
-  void decrementarQuantidade() {
-    if (state.quantidadeAtual > 1) {
-      state = state.copyWith(
-        quantidadeAtual: state.quantidadeAtual - 1,
+  void decrementarQuantidade(int contaIndex) {
+    final conta = state[contaIndex];
+
+    if (conta.quantidadeAtual > 1) {
+      final novaConta = conta.copyWith(
+        quantidadeAtual: conta.quantidadeAtual - 1,
       );
+
+      _atualizarConta(contaIndex, novaConta);
     }
   }
+
+  void toggleParticipante(int contaIndex, int artigoIndex, int participanteIndex) {
+    final conta = state[contaIndex];
+
+    final atuais = conta.atribuicoes[artigoIndex] ?? [];
+    final nova = [...atuais];
 
   Map<int, int> _criarAtribuicaoInicial() {
     return {
@@ -114,12 +145,14 @@ class ContaNotifier extends Notifier<ContaState> {
 
     atribuicoesAtuais[participanteIndex] = quantidadeFinal;
 
-    state = state.copyWith(
+    final novaConta = conta.copyWith(
       atribuicoes: {
-        ...state.atribuicoes,
-        artigoIndex: atribuicoesAtuais,
+        ...conta.atribuicoes,
+        artigoIndex: nova,
       },
     );
+
+    _atualizarConta(contaIndex, novaConta);
   }
 
   bool _indicesValidos(int artigoIndex, int participanteIndex) {
@@ -138,6 +171,11 @@ class ContaNotifier extends Notifier<ContaState> {
         .fold(0, (sum, entry) => sum + entry.value);
   }
 
+  void dividirPorTodos(int contaIndex, int artigoIndex) {
+    final conta = state[contaIndex];
+
+    final todos =
+        List.generate(conta.participantes.length, (i) => i);
   void dividirPorTodos(int artigoIndex) {
     final artigo = state.artigos[artigoIndex];
 
@@ -146,12 +184,39 @@ class ContaNotifier extends Notifier<ContaState> {
       state.participantes.length,
     );
 
-    state = state.copyWith(
+    final novaConta = conta.copyWith(
       atribuicoes: {
         ...state.atribuicoes,
         artigoIndex: novoMapa,
       },
     );
+
+    _atualizarConta(contaIndex, novaConta);
+  }
+
+  void _atualizarConta(int index, ContaState novaConta) {
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i == index) novaConta else state[i]
+    ];
+  }
+
+    void criarConta() {
+    state = [
+      ...state,
+      ContaState(
+        participantes: [],
+        artigos: [],
+        quantidadeAtual: 1,
+        atribuicoes: {},
+      ),
+    ];
+  }
+
+  void removerConta(int index) {
+    final novas = [...state];
+    novas.removeAt(index);
+    state = novas;
   }
 
   Map<int, int> _criarDivisaoEquilibrada(
@@ -220,6 +285,8 @@ class ContaNotifier extends Notifier<ContaState> {
   }
 }
 
+
+
 class ContaState {
   final String id;
   final List<Participante> participantes;
@@ -258,5 +325,7 @@ class ContaState {
   }
 }
 
-final contaProvider =
-    NotifierProvider<ContaNotifier, ContaState>(ContaNotifier.new);
+final contasProvider =
+    NotifierProvider<ContasNotifier, List<ContaState>>(
+  ContasNotifier.new,
+);

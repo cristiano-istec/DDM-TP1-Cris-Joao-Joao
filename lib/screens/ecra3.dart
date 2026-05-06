@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/providers.dart';
+
 import '../widgets/neon_card.dart';
 
 class Ecra3 extends ConsumerWidget {
-  const Ecra3({super.key});
+  final int contaIndex;
+
+  const Ecra3({super.key, required this.contaIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final conta = ref.watch(contaProvider);
+    final conta = ref.watch(contasProvider)[contaIndex];
 
     // mapa com totais por participante
     Map<int, double> totais = {};
@@ -69,7 +72,6 @@ class Ecra3 extends ConsumerWidget {
                     ),
                   ),
 
-                  // valor a pagar
                   Text(
                     "${totais[p.key]!.toStringAsFixed(2)}€",
 
