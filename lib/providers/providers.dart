@@ -33,14 +33,14 @@ class ContasNotifier extends Notifier<List<ContaState>> {
 
     final conta = state[index];
 
-    final novaConta = conta.copyWith(
-      nome: novoNome,
-    );
+    final novaConta = conta.copyWith(nome: novoNome);
 
     _atualizarConta(index, novaConta);
   }
 
   void removerConta(int index) {
+    if (index < 0 || index >= state.length) return;
+
     final novas = [...state];
     novas.removeAt(index);
     state = novas;
@@ -61,10 +61,12 @@ class ContasNotifier extends Notifier<List<ContaState>> {
 
   void removerParticipante(int contaIndex, int index) {
     final conta = state[contaIndex];
+
     final novos = [...conta.participantes];
     novos.removeAt(index);
 
     final novaConta = conta.copyWith(participantes: novos);
+
     _atualizarConta(contaIndex, novaConta);
   }
 
@@ -157,12 +159,6 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     _atualizarConta(contaIndex, novaConta);
   }
 
-  Map<int, int> _criarAtribuicaoInicial(List<Participante> participantes) {
-    return {
-      for (int i = 0; i < participantes.length; i++) i: 0,
-    };
-  }
-
   void setQuantidadeParticipante(
     int contaIndex,
     int artigoIndex,
@@ -202,26 +198,6 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     _atualizarConta(contaIndex, novaConta);
   }
 
-  bool _indicesValidos(
-    ContaState conta,
-    int artigoIndex,
-    int participanteIndex,
-  ) {
-    return artigoIndex >= 0 &&
-        artigoIndex < conta.artigos.length &&
-        participanteIndex >= 0 &&
-        participanteIndex < conta.participantes.length;
-  }
-
-  int _totalAtribuidoSemParticipante(
-    Map<int, int> atribuicoes,
-    int participanteIndex,
-  ) {
-    return atribuicoes.entries
-        .where((entry) => entry.key != participanteIndex)
-        .fold(0, (sum, entry) => sum + entry.value);
-  }
-
   void dividirPorTodos(int contaIndex, int artigoIndex) {
     final conta = state[contaIndex];
     final artigo = conta.artigos[artigoIndex];
@@ -239,22 +215,6 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     );
 
     _atualizarConta(contaIndex, novaConta);
-  }
-
-  Map<int, int> _criarDivisaoEquilibrada(
-    int total,
-    int participantes,
-  ) {
-    final mapa = <int, int>{};
-
-    final base = participantes > 0 ? total ~/ participantes : 0;
-    final resto = participantes > 0 ? total % participantes : 0;
-
-    for (int i = 0; i < participantes; i++) {
-      mapa[i] = base + (i < resto ? 1 : 0);
-    }
-
-    return mapa;
   }
 
   void guardarRecibo(int contaIndex, XFile imagem) {
@@ -275,6 +235,48 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     );
 
     _atualizarConta(contaIndex, novaConta);
+  }
+
+  Map<int, int> _criarAtribuicaoInicial(List<Participante> participantes) {
+    return {
+      for (int i = 0; i < participantes.length; i++) i: 0,
+    };
+  }
+
+  bool _indicesValidos(
+    ContaState conta,
+    int artigoIndex,
+    int participanteIndex,
+  ) {
+    return artigoIndex >= 0 &&
+        artigoIndex < conta.artigos.length &&
+        participanteIndex >= 0 &&
+        participanteIndex < conta.participantes.length;
+  }
+
+  int _totalAtribuidoSemParticipante(
+    Map<int, int> atribuicoes,
+    int participanteIndex,
+  ) {
+    return atribuicoes.entries
+        .where((entry) => entry.key != participanteIndex)
+        .fold(0, (sum, entry) => sum + entry.value);
+  }
+
+  Map<int, int> _criarDivisaoEquilibrada(
+    int total,
+    int participantes,
+  ) {
+    final mapa = <int, int>{};
+
+    final base = participantes > 0 ? total ~/ participantes : 0;
+    final resto = participantes > 0 ? total % participantes : 0;
+
+    for (int i = 0; i < participantes; i++) {
+      mapa[i] = base + (i < resto ? 1 : 0);
+    }
+
+    return mapa;
   }
 
   void _atualizarConta(int index, ContaState novaConta) {
@@ -320,7 +322,9 @@ class ContaState {
       artigos: artigos ?? this.artigos,
       quantidadeAtual: quantidadeAtual ?? this.quantidadeAtual,
       atribuicoes: atribuicoes ?? this.atribuicoes,
-      reciboImagem: limparRecibo ? null : reciboImagem ?? this.reciboImagem,
+      reciboImagem: limparRecibo
+          ? null
+          : reciboImagem ?? this.reciboImagem,
     );
   }
 }
