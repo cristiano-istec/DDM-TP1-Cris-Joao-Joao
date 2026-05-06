@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +70,7 @@ class Ecra3 extends ConsumerWidget {
             );
           }),
 
-          if (conta.reciboBase64 != null) ...[
+          if (conta.reciboPath != null) ...[
             const SizedBox(height: 20),
 
             const Text(
@@ -90,8 +90,8 @@ class Ecra3 extends ConsumerWidget {
                 height: 220,
                 width: double.infinity,
                 color: Colors.black,
-                child: Image.memory(
-                  base64Decode(conta.reciboBase64!),
+                child: Image.file(
+                  File(conta.reciboPath!),
                   fit: BoxFit.contain,
                 ),
               ),
