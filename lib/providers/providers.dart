@@ -8,14 +8,17 @@ import '../models/artigo.dart';
 class ContasNotifier extends Notifier<List<ContaState>> {
   @override
   List<ContaState> build() {
-      return [];
-    }
+    return [];
+  }
 
   void adicionarConta() {
+    final numero = state.length + 1;
+
     state = [
       ...state,
       ContaState(
         id: const Uuid().v4(),
+        nome: "Conta $numero",
         participantes: [],
         artigos: [],
         quantidadeAtual: 1,
@@ -23,6 +26,24 @@ class ContasNotifier extends Notifier<List<ContaState>> {
         reciboImagem: null,
       ),
     ];
+  }
+
+  void editarNomeConta(int index, String novoNome) {
+    if (index < 0 || index >= state.length) return;
+
+    final conta = state[index];
+
+    final novaConta = conta.copyWith(
+      nome: novoNome,
+    );
+
+    _atualizarConta(index, novaConta);
+  }
+
+  void removerConta(int index) {
+    final novas = [...state];
+    novas.removeAt(index);
+    state = novas;
   }
 
   void adicionarParticipante(int contaIndex, String nome) {
@@ -109,13 +130,18 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     }
   }
 
-  void toggleParticipante(int contaIndex, int artigoIndex, int participanteIndex) {
+  void toggleParticipante(
+    int contaIndex,
+    int artigoIndex,
+    int participanteIndex,
+  ) {
     final conta = state[contaIndex];
 
     final atribuicoesAtuais = conta.atribuicoes[artigoIndex] ?? {};
     final novasAtribuicoes = {...atribuicoesAtuais};
 
-    if (novasAtribuicoes.containsKey(participanteIndex) && novasAtribuicoes[participanteIndex]! > 0) {
+    if (novasAtribuicoes.containsKey(participanteIndex) &&
+        novasAtribuicoes[participanteIndex]! > 0) {
       novasAtribuicoes[participanteIndex] = 0;
     } else {
       novasAtribuicoes[participanteIndex] = 1;
@@ -144,9 +170,11 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     int quantidade,
   ) {
     final conta = state[contaIndex];
+
     if (!_indicesValidos(conta, artigoIndex, participanteIndex)) return;
 
     final artigo = conta.artigos[artigoIndex];
+
     final atribuicoesAtuais = {
       ...(conta.atribuicoes[artigoIndex] ?? {}),
     };
@@ -174,7 +202,11 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     _atualizarConta(contaIndex, novaConta);
   }
 
-  bool _indicesValidos(ContaState conta, int artigoIndex, int participanteIndex) {
+  bool _indicesValidos(
+    ContaState conta,
+    int artigoIndex,
+    int participanteIndex,
+  ) {
     return artigoIndex >= 0 &&
         artigoIndex < conta.artigos.length &&
         participanteIndex >= 0 &&
@@ -209,36 +241,6 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     _atualizarConta(contaIndex, novaConta);
   }
 
-  void _atualizarConta(int index, ContaState novaConta) {
-    state = [
-      for (int i = 0; i < state.length; i++)
-        if (i == index) novaConta else state[i]
-    ];
-  }
-
-  void removerConta(int index) {
-    final novas = [...state];
-    novas.removeAt(index);
-    state = novas;
-  }
-
-  void editarNomeConta(int index) {
-    
-  }
-
-
-  void guardarRecibo(int contaIndex, XFile imagem) {
-    final conta = state[contaIndex];
-    final novaConta = conta.copyWith(reciboImagem: imagem);
-    _atualizarConta(contaIndex, novaConta);
-  }
-
-  void removerRecibo(int contaIndex) {
-    final conta = state[contaIndex];
-    final novaConta = conta.copyWith(reciboImagem: null);
-    _atualizarConta(contaIndex, novaConta);
-  }
-
   Map<int, int> _criarDivisaoEquilibrada(
     int total,
     int participantes,
@@ -255,13 +257,37 @@ class ContasNotifier extends Notifier<List<ContaState>> {
     return mapa;
   }
 
+  void guardarRecibo(int contaIndex, XFile imagem) {
+    final conta = state[contaIndex];
 
+    final novaConta = conta.copyWith(
+      reciboImagem: imagem,
+    );
+
+    _atualizarConta(contaIndex, novaConta);
+  }
+
+  void removerRecibo(int contaIndex) {
+    final conta = state[contaIndex];
+
+    final novaConta = conta.copyWith(
+      limparRecibo: true,
+    );
+
+    _atualizarConta(contaIndex, novaConta);
+  }
+
+  void _atualizarConta(int index, ContaState novaConta) {
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i == index) novaConta else state[i],
+    ];
+  }
 }
-
-
 
 class ContaState {
   final String id;
+  final String nome;
   final List<Participante> participantes;
   final List<Artigo> artigos;
   final int quantidadeAtual;
@@ -270,6 +296,7 @@ class ContaState {
 
   ContaState({
     required this.id,
+    required this.nome,
     required this.participantes,
     required this.artigos,
     required this.quantidadeAtual,
@@ -278,6 +305,7 @@ class ContaState {
   });
 
   ContaState copyWith({
+    String? nome,
     List<Participante>? participantes,
     List<Artigo>? artigos,
     int? quantidadeAtual,
@@ -287,13 +315,12 @@ class ContaState {
   }) {
     return ContaState(
       id: id,
+      nome: nome ?? this.nome,
       participantes: participantes ?? this.participantes,
       artigos: artigos ?? this.artigos,
       quantidadeAtual: quantidadeAtual ?? this.quantidadeAtual,
       atribuicoes: atribuicoes ?? this.atribuicoes,
-      reciboImagem: limparRecibo
-          ? null
-          : reciboImagem ?? this.reciboImagem,
+      reciboImagem: limparRecibo ? null : reciboImagem ?? this.reciboImagem,
     );
   }
 }

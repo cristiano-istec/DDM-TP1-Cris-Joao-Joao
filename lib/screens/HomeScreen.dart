@@ -1,6 +1,7 @@
 import 'package:ddm_pdmi_tp01/screens/ecra1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../providers/providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -11,6 +12,46 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  void _mostrarDialogEditarNome(int index, String nomeAtual) {
+    final controller = TextEditingController(text: nomeAtual);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Editar nome da conta"),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: "Nome da conta",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () {
+                final novoNome = controller.text.trim();
+
+                if (novoNome.isEmpty) return;
+
+                ref
+                    .read(contasProvider.notifier)
+                    .editarNomeConta(index, novoNome);
+
+                Navigator.pop(context);
+              },
+              child: const Text("Guardar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,20 +94,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: CustomScrollView(
         center: centerKey,
         slivers: <Widget>[
-
           SliverList.builder(
             key: centerKey,
             itemCount: contas.length,
             itemBuilder: (BuildContext context, int index) {
+              final conta = contas[index];
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[900],
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF00FFC6), width: 2),
+                    border: Border.all(
+                      color: const Color(0xFF00FFC6),
+                      width: 2,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFF00FFC6).withOpacity(0.5),
@@ -75,10 +121,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
-
                   child: ListTile(
                     textColor: Colors.white,
-                    title: Text('Conta $index'),
+                    title: Text(conta.nome),
                     titleAlignment: ListTileTitleAlignment.center,
 
                     onTap: () => Navigator.push(
@@ -91,25 +136,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onLongPress: () {
                       showMenu(
                         context: context,
-                        position: RelativeRect.fromLTRB(0, 0, 0, 0), // Adjust position as needed
-                        items: [
-                          const PopupMenuItem(
+                        position: const RelativeRect.fromLTRB(0, 0, 0, 0),
+                        items: const [
+                          PopupMenuItem(
                             value: 'delete',
                             child: Text('Remover Conta'),
                           ),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'edit',
                             child: Text('Editar Nome'),
-                          )
+                          ),
                         ],
                       ).then((value) {
                         if (value == 'delete') {
-                          ref.read(contasProvider.notifier).removerConta(index);
+                          ref
+                              .read(contasProvider.notifier)
+                              .removerConta(index);
                         }
+
                         if (value == 'edit') {
-                          ref.read(contasProvider.notifier).editarNomeConta(index);
+                          _mostrarDialogEditarNome(index, conta.nome);
                         }
-                      }); 
+                      });
                     },
                   ),
                 ),
