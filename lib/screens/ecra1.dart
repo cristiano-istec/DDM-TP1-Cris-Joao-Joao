@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -316,11 +318,29 @@ NeonCard(
 
       const SizedBox(height: 10),
 
-      if (reciboImagem != null)
+      if (reciboImagem != null) ...[
+        const SizedBox(height: 10),
+
         const Text(
           "Imagem associada com sucesso",
           style: TextStyle(color: Colors.greenAccent),
         ),
+
+        const SizedBox(height: 10),
+
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: 220,
+            width: double.infinity,
+            color: Colors.black,
+            child: Image.file(
+              File(reciboImagem!.path),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
     ],
   ),
 ),
