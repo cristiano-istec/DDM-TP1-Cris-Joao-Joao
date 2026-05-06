@@ -28,9 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cancelar"),
             ),
             TextButton(
@@ -39,9 +37,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                 if (novoNome.isEmpty) return;
 
-                ref
-                    .read(contasProvider.notifier)
-                    .editarNomeConta(index, novoNome);
+                ref.read(contasProvider.notifier).editarNomeConta(
+                      index,
+                      novoNome,
+                    );
 
                 Navigator.pop(context);
               },
@@ -61,12 +60,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-
       appBar: AppBar(
         title: const Text('Clica no + para iniciar uma conta'),
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
-
         leading: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
@@ -74,7 +71,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF00FFC6),
         foregroundColor: Colors.black,
@@ -90,14 +86,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
         child: const Icon(Icons.info),
       ),
-
       body: CustomScrollView(
         center: centerKey,
-        slivers: <Widget>[
+        slivers: [
           SliverList.builder(
             key: centerKey,
             itemCount: contas.length,
-            itemBuilder: (BuildContext context, int index) {
+            itemBuilder: (context, index) {
               final conta = contas[index];
 
               return Padding(
@@ -125,14 +120,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     textColor: Colors.white,
                     title: Text(conta.nome),
                     titleAlignment: ListTileTitleAlignment.center,
-
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Ecra1(contaIndex: index),
-                      ),
-                    ),
-
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Ecra1(contaIndex: index),
+                        ),
+                      );
+                    },
                     onLongPress: () {
                       showMenu(
                         context: context,
@@ -149,9 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ).then((value) {
                         if (value == 'delete') {
-                          ref
-                              .read(contasProvider.notifier)
-                              .removerConta(index);
+                          ref.read(contasProvider.notifier).removerConta(index);
                         }
 
                         if (value == 'edit') {
