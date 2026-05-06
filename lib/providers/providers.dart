@@ -198,7 +198,6 @@ class ContaState {
   }
 }
 
-// 🔥 Novo provider (lista de contas)
 final contasProvider =
     NotifierProvider<ContasNotifier, List<ContaState>>(
   ContasNotifier.new,
