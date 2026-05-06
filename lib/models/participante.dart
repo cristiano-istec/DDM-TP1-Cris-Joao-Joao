@@ -1,7 +1,19 @@
 class Participante {
+  String nome;
 
-  String nome;    // Publico
+  Participante({
+    required this.nome,
+  });
 
-  Participante({required this.nome});
+  Map<String, dynamic> toJson() {
+    return {
+      'nome': nome,
+    };
+  }
 
+  factory Participante.fromJson(Map<String, dynamic> json) {
+    return Participante(
+      nome: json['nome'],
+    );
+  }
 }
